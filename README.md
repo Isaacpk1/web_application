@@ -27,7 +27,7 @@ Aplicação web de georreferenciamento para gestão de riscos e acolhimento emer
 
 ## Pré-requisitos
 
-- [Node.js](https://nodejs.org/) v18 ou superior
+- [Node.js](https://nodejs.org/) v22 ou superior
 - Conta no [Supabase](https://supabase.com/) (ou use o modo mock para desenvolvimento sem banco)
 - npm (incluso no Node.js)
 
