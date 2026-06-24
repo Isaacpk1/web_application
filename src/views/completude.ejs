@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head><%- include('partials/head', { title }) %></head>
+<body>
+<div class="layout">
+  <%- include('partials/sidebar', { active: 'completude' }) %>
+  <div class="main">
+    <%- include('partials/topbar', { pageTitle: 'Acompanhamento de Completude' }) %>
+    <div class="page-content">
+
+      <!-- KPI Cards -->
+      <div class="completude-kpi">
+        <div class="c-kpi-card">
+          <div class="c-kpi-bar c-kpi-bar--orange"></div>
+          <div><div class="c-kpi-value" id="c-total">—</div><div class="c-kpi-label">Total de Registros</div></div>
+        </div>
+        <div class="c-kpi-card">
+          <div class="c-kpi-bar c-kpi-bar--green"></div>
+          <div><div class="c-kpi-value" id="c-completos">—</div><div class="c-kpi-label">Completos</div></div>
+        </div>
+        <div class="c-kpi-card">
+          <div class="c-kpi-bar c-kpi-bar--red"></div>
+          <div><div class="c-kpi-value" id="c-incompletos">—</div><div class="c-kpi-label">Incompletos</div></div>
+        </div>
+        <div class="c-kpi-card">
+          <div class="c-kpi-bar c-kpi-bar--blue"></div>
+          <div><div class="c-kpi-value" id="c-taxa">—</div><div class="c-kpi-label">Taxa de Completude</div></div>
+        </div>
+      </div>
+
+      <!-- Lista -->
+      <div class="section-card">
+        <div class="tab-bar">
+          <button class="tab-btn is-active" data-aba="">Todos <span class="tab-count" id="tab-total">—</span></button>
+          <button class="tab-btn" data-aba="completos">Completos <span class="tab-count" id="tab-completos">—</span></button>
+          <button class="tab-btn" data-aba="incompletos">Incompletos <span class="tab-count" id="tab-incompletos">—</span></button>
+        </div>
+        <div id="completude-list">
+          <div class="state-loading">Carregando…</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+<script src="/js/api.js"></script>
+<script src="/js/completude.js"></script>
+</body>
+</html>

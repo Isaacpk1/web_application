@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <%- include('partials/head', { title }) %>
+  <meta name="theme-color" content="#0d1726" />
+  <style>
+    body { background: #f4f5f7; }
+
+    /* ── App shell ── */
+    .m-app { max-width: 420px; margin: 0 auto; min-height: 100vh; min-height: 100dvh; background: #fff; display: flex; flex-direction: column; box-shadow: 0 0 40px rgba(0,0,0,.08); }
+
+    /* ── Topbar ── */
+    .m-topbar { background: #0d1726; color: #fff; min-height: 52px; display: flex; align-items: center; gap: 8px; padding: 0 12px 0 4px; position: sticky; top: 0; z-index: 20; }
+    .m-topbar__back { background: none; border: none; color: #fff; font-size: 22px; padding: 8px 10px; border-radius: 8px; cursor: pointer; }
+    .m-topbar__title { flex: 1; font-size: 16px; font-weight: 700; }
+    .m-topbar__save { font-size: 11px; background: rgba(255,255,255,.15); border-radius: 20px; padding: 3px 10px; opacity: 0; transition: opacity .3s; }
+    .m-topbar__save.show { opacity: 1; }
+
+    /* ── Stepper ── */
+    .m-stepper { padding: 14px 16px 10px; background: #fff; border-bottom: 1px solid #E5E7EB; }
+    .m-stepper__row { display: flex; justify-content: space-between; position: relative; margin-bottom: 8px; }
+    .m-stepper__track { height: 3px; background: #E5E7EB; border-radius: 2px; overflow: hidden; }
+    .m-stepper__fill  { height: 100%; background: var(--brand, #F97316); border-radius: 2px; transition: width .4s ease; }
+    .m-step-item { display: flex; flex-direction: column; align-items: center; gap: 4px; flex: 1; cursor: pointer; }
+    .m-step-item__dot { width: 28px; height: 28px; border-radius: 50%; background: #E5E7EB; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; color: #9CA3AF; transition: background .3s, color .3s; }
+    .m-step-item__label { font-size: 10px; color: #9CA3AF; font-weight: 500; transition: color .3s; }
+    .m-step-item.is-active .m-step-item__dot  { background: #F97316; color: #fff; }
+    .m-step-item.is-active .m-step-item__label { color: #F97316; }
+    .m-step-item.is-done .m-step-item__dot    { background: #22c55e; color: #fff; }
+    .m-step-item.is-done .m-step-item__label  { color: #22c55e; }
+
+    /* ── Body ── */
+    .m-body { flex: 1; overflow-y: auto; padding: 20px 16px; }
+    .m-card-title { font-size: 18px; font-weight: 800; color: #0D1726; margin-bottom: 4px; }
+    .m-card-sub   { font-size: 13px; color: #6B7280; margin-bottom: 16px; }
+    .m-card-divider { height: 1px; background: #E5E7EB; margin-bottom: 20px; }
+
+    /* ── Fields ── */
+    .m-field { margin-bottom: 16px; }
+    .m-field__label { display: block; font-size: 13px; font-weight: 600; color: #374151; margin-bottom: 6px; }
+    .m-field__req   { color: #F97316; }
+    .m-field__control {
+      width: 100%; height: 52px; padding: 0 14px;
+      border: 1.5px solid #E5E7EB; border-radius: 10px;
+      font-size: 15px; background: #fff; color: #0D1726;
+      transition: border-color .2s, box-shadow .2s;
+    }
+    .m-field__control:focus { outline: none; border-color: #F97316; box-shadow: 0 0 0 3px rgba(249,115,22,.12); }
+    .m-field.is-invalid .m-field__control { border-color: #EF4444; background: #fff0f0; }
+    .m-field__error { display: none; font-size: 12px; color: #EF4444; margin-top: 5px; }
+    .m-field.is-invalid .m-field__error { display: block; }
+
+    /* ── GPS ── */
+    .m-map {
+      width: 100%; height: 160px; border-radius: 12px; overflow: hidden;
+      background: #DCF0DB; position: relative; margin-bottom: 16px;
+      background-image: repeating-linear-gradient(#B8DCBC 0 1px, transparent 1px 40px),
+                        repeating-linear-gradient(90deg, #B8DCBC 0 1px, transparent 1px 40px);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .m-map.is-empty::after { content: '📍'; font-size: 32px; opacity: .35; }
+    .m-map__pin { display: none; position: absolute; top: 50%; left: 50%; transform: translate(-50%,-60%); font-size: 36px; filter: drop-shadow(0 2px 4px rgba(0,0,0,.3)); }
+    .m-map:not(.is-empty) .m-map__pin { display: block; }
+    .m-badge-ok { display: none; align-items: center; gap: 6px; background: #22c55e; color: #fff; font-size: 12px; font-weight: 700; border-radius: 20px; padding: 4px 12px; margin-bottom: 12px; }
+    .m-badge-ok.show { display: flex; }
+    .m-btn-gps {
+      width: 100%; padding: 13px; background: #0d1726; color: #fff;
+      border-radius: 10px; font-size: 14px; font-weight: 700; border: none; cursor: pointer;
+      display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 14px;
+      transition: background .15s;
+    }
+    .m-btn-gps:hover { background: #1a2840; }
+    .m-btn-gps:disabled { opacity: .6; cursor: not-allowed; }
+
+    /* ── Revisão cards ── */
+    .m-review-card { background: #F9FAFB; border-radius: 10px; padding: 14px 16px; margin-bottom: 14px; }
+    .m-review-card__head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+    .m-review-card__title { font-size: 13px; font-weight: 700; color: #374151; }
+    .m-review-card__edit  { font-size: 12px; color: #F97316; font-weight: 600; background: none; border: none; cursor: pointer; }
+    .m-review-row { display: flex; justify-content: space-between; font-size: 13px; padding: 5px 0; border-bottom: 1px solid #E5E7EB; }
+    .m-review-row:last-child { border-bottom: none; }
+    .m-review-key { color: #6B7280; }
+    .m-review-val { font-weight: 600; text-align: right; max-width: 60%; }
+    .m-toast-ok { display: none; align-items: center; gap: 8px; background: #DCFCE7; border: 1px solid #86EFAC; border-radius: 10px; padding: 12px 16px; margin-bottom: 14px; font-size: 13px; color: #166534; font-weight: 600; }
+    .m-toast-ok.show { display: flex; }
+    .m-error-net { display: none; background: #FEF2F2; border: 1px solid #FCA5A5; border-radius: 10px; padding: 12px 16px; margin-bottom: 14px; font-size: 13px; color: #991B1B; }
+    .m-error-net.show { display: block; }
+
+    /* ── Sucesso ── */
+    .m-success { display: flex; flex-direction: column; align-items: center; padding: 40px 20px; text-align: center; }
+    .m-success__circles { position: relative; width: 140px; height: 140px; margin-bottom: 28px; }
+    .m-success__ring { position: absolute; border-radius: 50%; border: 2px solid; }
+    .m-success__ring--1 { inset: 0;    border-color: rgba(34,197,94,.15); }
+    .m-success__ring--2 { inset: 16px; border-color: rgba(34,197,94,.3); }
+    .m-success__ring--3 { inset: 32px; background: #22c55e; border-color: #22c55e; display: flex; align-items: center; justify-content: center; }
+    .m-success__check   { font-size: 36px; color: #fff; }
+    .m-success__title   { font-size: 22px; font-weight: 800; margin-bottom: 8px; }
+    .m-success__desc    { font-size: 14px; color: #6B7280; margin-bottom: 6px; }
+    .m-success__proto   { font-size: 12px; color: #9CA3AF; margin-bottom: 28px; }
+    .m-success__actions { width: 100%; display: flex; flex-direction: column; gap: 10px; }
+
+    /* ── Footer ── */
+    .m-footer { padding: 12px 16px; background: #fff; border-top: 1px solid #E5E7EB; display: flex; align-items: center; justify-content: space-between; position: sticky; bottom: 0; gap: 8px; }
+    .m-footer__hint { font-size: 12px; color: #9CA3AF; flex: 1; }
+    .m-footer__actions { display: flex; gap: 8px; }
+    .m-btn { padding: 11px 20px; border-radius: 10px; font-size: 14px; font-weight: 700; border: none; cursor: pointer; transition: background .15s; }
+    .m-btn--primary { background: #F97316; color: #fff; }
+    .m-btn--primary:hover { background: #EA6B0E; }
+    .m-btn--ghost   { background: #F3F4F6; color: #374151; }
+    .m-btn--ghost:hover { background: #E5E7EB; }
+    .m-btn:disabled { opacity: .6; cursor: not-allowed; }
+
+    /* ── Vulnerabilidade chips ── */
+    .m-vuln-grid { display: flex; flex-wrap: wrap; gap: 8px; }
+    .m-vuln-chip { display: flex; align-items: center; gap: 6px; padding: 6px 12px; background: #F3F4F6; border-radius: 20px; font-size: 12px; color: #374151; border: 1.5px solid transparent; cursor: pointer; transition: all .15s; }
+    .m-vuln-chip:has(input:checked) { background: #FFF7ED; border-color: #F97316; color: #EA580C; }
+    .m-vuln-chip input { display: none; }
+
+    /* ── Lista de membros ── */
+    .m-member-list { margin-bottom: 16px; }
+    .m-member-item { display: flex; align-items: center; gap: 10px; padding: 12px 14px; background: #F9FAFB; border-radius: 10px; margin-bottom: 8px; border: 1.5px solid #E5E7EB; }
+    .m-member-info { flex: 1; min-width: 0; }
+    .m-member-name { font-size: 14px; font-weight: 700; color: #0D1726; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .m-member-sub  { font-size: 12px; color: #9CA3AF; margin-top: 2px; }
+    .m-member-remove { flex-shrink: 0; background: none; border: 1.5px solid #FCA5A5; border-radius: 8px; color: #EF4444; font-size: 16px; font-weight: 700; cursor: pointer; padding: 4px 10px; line-height: 1; }
+    .m-member-remove:hover { background: #FEF2F2; }
+
+    /* ── Seção de adicionar membro ── */
+    .m-add-section { background: #F9FAFB; border: 1.5px dashed #D1D5DB; border-radius: 12px; padding: 16px; }
+    .m-add-section-title { font-size: 13px; font-weight: 700; color: #6B7280; margin-bottom: 14px; }
+
+    /* ── Seleção de chefe ── */
+    .m-chefe-item { display: flex; align-items: center; gap: 12px; padding: 16px; border-radius: 12px; border: 2px solid #E5E7EB; margin-bottom: 10px; cursor: pointer; transition: all .2s; user-select: none; }
+    .m-chefe-item.is-selected { border-color: #F97316; background: #FFF7ED; }
+    .m-chefe-item:hover:not(.is-selected):not([data-minor]) { border-color: #D1D5DB; background: #F9FAFB; }
+    .m-chefe-radio { width: 22px; height: 22px; border-radius: 50%; border: 2px solid #D1D5DB; flex-shrink: 0; display: flex; align-items: center; justify-content: center; transition: border-color .2s; }
+    .m-chefe-item.is-selected .m-chefe-radio { border-color: #F97316; }
+    .m-chefe-dot { width: 12px; height: 12px; border-radius: 50%; background: #F97316; display: none; }
+    .m-chefe-item.is-selected .m-chefe-dot { display: block; }
+    .m-chefe-name { font-size: 15px; font-weight: 700; color: #0D1726; }
+    .m-chefe-sub  { font-size: 12px; color: #9CA3AF; margin-top: 2px; }
+
+    /* ── Tablet / Desktop ── */
+    @media (min-width: 768px) {
+      body { display: flex; align-items: flex-start; justify-content: center; padding: 32px 16px 48px; min-height: 100vh; }
+      .m-app { max-width: 480px; border-radius: 20px; overflow: hidden; box-shadow: 0 8px 40px rgba(0,0,0,.14); min-height: auto; }
+      .m-body { max-height: 580px; }
+    }
+  </style>
+</head>
+<body>
+<div class="m-app" data-agente-cadastro>
+
+  <!-- Topbar -->
+  <header class="m-topbar">
+    <button type="button" class="m-topbar__back" data-back aria-label="Voltar">&larr;</button>
+    <span class="m-topbar__title">Cadastro de Família</span>
+    <span class="m-topbar__save" data-save-pill>Salvo</span>
+  </header>
+
+  <!-- Stepper (6 etapas) -->
+  <nav class="m-stepper" aria-label="Progresso do cadastro">
+    <div class="m-stepper__row">
+      <div class="m-step-item is-active" data-step-item="1" role="button" tabindex="0">
+        <div class="m-step-item__dot"><span class="num">1</span></div>
+        <span class="m-step-item__label">Imóvel</span>
+      </div>
+      <div class="m-step-item" data-step-item="2" role="button" tabindex="0">
+        <div class="m-step-item__dot"><span class="num">2</span></div>
+        <span class="m-step-item__label">Núcleo</span>
+      </div>
+      <div class="m-step-item" data-step-item="3" role="button" tabindex="0">
+        <div class="m-step-item__dot"><span class="num">3</span></div>
+        <span class="m-step-item__label">Membros</span>
+      </div>
+      <div class="m-step-item" data-step-item="4" role="button" tabindex="0">
+        <div class="m-step-item__dot"><span class="num">4</span></div>
+        <span class="m-step-item__label">Chefe</span>
+      </div>
+      <div class="m-step-item" data-step-item="5" role="button" tabindex="0">
+        <div class="m-step-item__dot"><span class="num">5</span></div>
+        <span class="m-step-item__label">Pets</span>
+      </div>
+      <div class="m-step-item" data-step-item="6" role="button" tabindex="0">
+        <div class="m-step-item__dot"><span class="num">6</span></div>
+        <span class="m-step-item__label">Revisão</span>
+      </div>
+    </div>
+    <div class="m-stepper__track"><div class="m-stepper__fill"></div></div>
+  </nav>
+
+  <main class="m-body">
+
+    <!-- PASSO 1 — Imóvel -->
+    <section class="m-step" data-step="1">
+      <h1 class="m-card-title">Imóvel</h1>
+      <p class="m-card-sub">Setor de risco e dados da propriedade</p>
+      <div class="m-card-divider"></div>
+
+      <div class="m-field" data-field data-required>
+        <label class="m-field__label" for="m_setor">Setor de risco <span class="m-field__req">*</span></label>
+        <select class="m-field__control" id="m_setor">
+          <option value="">Carregando setores…</option>
+        </select>
+        <span class="m-field__error">Selecione o setor de risco.</span>
+      </div>
+
+      <div class="m-map is-empty" data-map>
+        <div class="m-map__pin">📍</div>
+      </div>
+      <div class="m-badge-ok" data-gps-badge>✓ GPS capturado com precisão</div>
+      <button type="button" class="m-btn-gps" data-gps-capture>
+        <span>📡</span><span class="label">Capturar GPS automaticamente</span>
+      </button>
+
+      <p style="text-align:center;font-size:12px;color:#9CA3AF;margin:0 0 14px">— ou informe as coordenadas manualmente —</p>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <div class="m-field" data-field data-required>
+          <label class="m-field__label" for="m_latitude">Latitude <span class="m-field__req">*</span></label>
+          <input class="m-field__control" id="m_latitude" type="number" step="any" inputmode="decimal" placeholder="-23.6647" />
+          <span class="m-field__error">Informe uma latitude entre -90 e 90.</span>
+        </div>
+        <div class="m-field" data-field data-required>
+          <label class="m-field__label" for="m_longitude">Longitude <span class="m-field__req">*</span></label>
+          <input class="m-field__control" id="m_longitude" type="number" step="any" inputmode="decimal" placeholder="-46.5294" />
+          <span class="m-field__error">Informe uma longitude entre -180 e 180.</span>
+        </div>
+      </div>
+
+      <div class="m-field" data-field data-required>
+        <label class="m-field__label" for="m_logradouro">Logradouro <span class="m-field__req">*</span></label>
+        <input class="m-field__control" id="m_logradouro" type="text" placeholder="Rua, Avenida, Travessa…" autocomplete="street-address" />
+        <span class="m-field__error">Informe o logradouro.</span>
+      </div>
+
+      <div style="display:grid;grid-template-columns:2fr 1fr;gap:10px">
+        <div class="m-field" data-field data-required>
+          <label class="m-field__label" for="m_bairro">Bairro <span class="m-field__req">*</span></label>
+          <input class="m-field__control" id="m_bairro" type="text" placeholder="Bairro" />
+          <span class="m-field__error">Informe o bairro.</span>
+        </div>
+        <div class="m-field" data-field data-required>
+          <label class="m-field__label" for="m_numero">Número <span class="m-field__req">*</span></label>
+          <input class="m-field__control" id="m_numero" type="text" placeholder="Nº ou S/N" />
+          <span class="m-field__error">Informe o número ou S/N.</span>
+        </div>
+      </div>
+
+      <div class="m-field" data-field>
+        <label class="m-field__label" for="m_cep">CEP</label>
+        <input class="m-field__control" id="m_cep" type="text" inputmode="numeric" placeholder="00000-000" maxlength="9" />
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <div class="m-field" data-field data-required>
+          <label class="m-field__label" for="m_tipo_construcao">Construção <span class="m-field__req">*</span></label>
+          <select class="m-field__control" id="m_tipo_construcao">
+            <option value="">—</option>
+            <option>Alvenaria</option>
+            <option>Madeira</option>
+            <option>Misto</option>
+          </select>
+          <span class="m-field__error">Selecione o tipo.</span>
+        </div>
+        <div class="m-field" data-field data-required>
+          <label class="m-field__label" for="m_uso_imovel">Uso <span class="m-field__req">*</span></label>
+          <select class="m-field__control" id="m_uso_imovel">
+            <option value="">—</option>
+            <option>Residencial</option>
+            <option>Comercial</option>
+            <option>Misto</option>
+          </select>
+          <span class="m-field__error">Selecione o uso.</span>
+        </div>
+      </div>
+
+      <div class="m-field" data-field>
+        <label class="m-field__label" for="m_status_imovel">Situação do imóvel</label>
+        <select class="m-field__control" id="m_status_imovel">
+          <option value="Sadio" selected>Sadio</option>
+          <option value="Interditado">Interditado</option>
+          <option value="Destruido">Destruído</option>
+        </select>
+      </div>
+
+      <div class="m-field" data-field id="m_field_data_interdicao" hidden>
+        <label class="m-field__label" for="m_data_interdicao">Data de interdição</label>
+        <input class="m-field__control" id="m_data_interdicao" type="date" />
+      </div>
+
+      <div class="m-field" data-field>
+        <label class="m-field__label" for="m_observacao_imovel">Observação do imóvel</label>
+        <input class="m-field__control" id="m_observacao_imovel" type="text" placeholder="Observação opcional…" />
+      </div>
+    </section>
+
+    <!-- PASSO 2 — Núcleo Familiar -->
+    <section class="m-step" data-step="2" hidden>
+      <h1 class="m-card-title">Núcleo Familiar</h1>
+      <p class="m-card-sub">Informações do grupo familiar</p>
+      <div class="m-card-divider"></div>
+
+      <div class="m-field" data-field data-required>
+        <label class="m-field__label" for="m_nome_nucleo">Nome do núcleo <span class="m-field__req">*</span></label>
+        <input class="m-field__control" id="m_nome_nucleo" type="text" placeholder="Ex.: Família Silva" />
+        <span class="m-field__error">Informe o nome do núcleo.</span>
+      </div>
+
+      <div class="m-field" data-field>
+        <label class="m-field__label" for="m_renda_familiar">Renda familiar total (R$)</label>
+        <input class="m-field__control" id="m_renda_familiar" type="number" min="0" step="0.01" placeholder="0,00" />
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px">
+        <div class="m-field" data-field>
+          <label class="m-field__label" for="m_tempo_residencia_domicilio">Anos no domicílio</label>
+          <input class="m-field__control" id="m_tempo_residencia_domicilio" type="number" min="0" step="1" placeholder="0" />
+        </div>
+        <div class="m-field" data-field>
+          <label class="m-field__label" for="m_tempo_residencia_area">Anos na área</label>
+          <input class="m-field__control" id="m_tempo_residencia_area" type="number" min="0" step="1" placeholder="0" />
+        </div>
+        <div class="m-field" data-field>
+          <label class="m-field__label" for="m_tempo_residencia_municipio">Anos no município</label>
+          <input class="m-field__control" id="m_tempo_residencia_municipio" type="number" min="0" step="1" placeholder="0" />
+        </div>
+      </div>
+
+      <div class="m-field" data-field>
+        <label class="m-field__label" for="m_observacao_nucleo">Observação / Nº ficha</label>
+        <input class="m-field__control" id="m_observacao_nucleo" type="text" placeholder="Observação opcional…" />
+      </div>
+    </section>
+
+    <!-- PASSO 3 — Membros -->
+    <section class="m-step" data-step="3" hidden>
+      <h1 class="m-card-title">Membros</h1>
+      <p class="m-card-sub">Cadastre todos os moradores do núcleo</p>
+      <div class="m-card-divider"></div>
+
+      <!-- Lista de membros já adicionados (preenchida via JS) -->
+      <div data-membros-list class="m-member-list"></div>
+
+      <!-- Formulário para adicionar um novo membro -->
+      <div class="m-add-section" data-membro-form>
+        <p class="m-add-section-title" data-membro-form-title>Adicionar 1º membro</p>
+
+        <div class="m-field" data-mf data-mf-required>
+          <label class="m-field__label" for="mf_nome">Nome completo <span class="m-field__req">*</span></label>
+          <input class="m-field__control" id="mf_nome" type="text" placeholder="Nome completo" autocomplete="off" />
+          <span class="m-field__error">Informe o nome completo.</span>
+        </div>
+
+        <div class="m-field" data-mf data-mf-required>
+          <label class="m-field__label" for="mf_nascimento">Data de nascimento <span class="m-field__req">*</span></label>
+          <input class="m-field__control" id="mf_nascimento" type="date" />
+          <span class="m-field__error">Informe a data de nascimento.</span>
+        </div>
+
+        <div class="m-field" data-mf data-mf-required>
+          <label class="m-field__label" for="mf_genero">Gênero <span class="m-field__req">*</span></label>
+          <select class="m-field__control" id="mf_genero">
+            <option value="">Selecionar…</option>
+            <option>Masculino</option>
+            <option>Feminino</option>
+            <option>Outro</option>
+          </select>
+          <span class="m-field__error">Selecione o gênero.</span>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+          <div class="m-field" data-mf>
+            <label class="m-field__label" for="mf_apelido">Apelido</label>
+            <input class="m-field__control" id="mf_apelido" type="text" placeholder="Apelido" />
+          </div>
+          <div class="m-field" data-mf>
+            <label class="m-field__label" for="mf_nome_social">Nome social</label>
+            <input class="m-field__control" id="mf_nome_social" type="text" placeholder="Nome social" />
+          </div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+          <div class="m-field" data-mf>
+            <label class="m-field__label" for="mf_cor_raca">Cor/raça</label>
+            <select class="m-field__control" id="mf_cor_raca">
+              <option value="">—</option>
+              <option value="Branco">Branco</option>
+              <option value="Preto">Preto</option>
+              <option value="Pardo">Pardo</option>
+              <option value="Amarelo">Amarelo</option>
+              <option value="Indigena">Indígena</option>
+            </select>
+          </div>
+          <div class="m-field" data-mf>
+            <label class="m-field__label" for="mf_uf">UF (naturalidade)</label>
+            <select class="m-field__control" id="mf_uf">
+              <option value="">—</option>
+              <% ['AC','AL','AP','AM','BA','CE','DF','ES','GO','MA','MT','MS','MG','PA','PB','PR','PE','PI','RJ','RN','RS','RO','RR','SC','SP','SE','TO'].forEach(function (uf) { %>
+                <option value="<%= uf %>"><%= uf %></option>
+              <% }) %>
+            </select>
+          </div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+          <div class="m-field" data-mf>
+            <label class="m-field__label" for="mf_status_vital">Status vital</label>
+            <select class="m-field__control" id="mf_status_vital">
+              <option value="Vivo" selected>Vivo</option>
+              <option value="Obito">Óbito</option>
+              <option value="Desaparecido">Desaparecido</option>
+            </select>
+          </div>
+          <div class="m-field" data-mf id="mf_field_data_obito" hidden>
+            <label class="m-field__label" for="mf_data_obito">Data do óbito</label>
+            <input class="m-field__control" id="mf_data_obito" type="date" />
+          </div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+          <div class="m-field" data-mf>
+            <label class="m-field__label" for="mf_cpf">CPF</label>
+            <input class="m-field__control" id="mf_cpf" type="text" inputmode="numeric" placeholder="000.000.000-00" maxlength="14" autocomplete="off" />
+            <span class="m-field__error">CPF inválido.</span>
+          </div>
+          <div class="m-field" data-mf>
+            <label class="m-field__label" for="mf_estado_civil">Estado civil</label>
+            <select class="m-field__control" id="mf_estado_civil">
+              <option value="">—</option>
+              <option value="Solteiro">Solteiro(a)</option>
+              <option value="Casado">Casado(a)</option>
+              <option value="Divorciado">Divorciado(a)</option>
+              <option value="Viuvo">Viúvo(a)</option>
+            </select>
+          </div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+          <div class="m-field" data-mf>
+            <label class="m-field__label" for="mf_rg">RG</label>
+            <input class="m-field__control" id="mf_rg" type="text" placeholder="RG" autocomplete="off" />
+          </div>
+          <div class="m-field" data-mf>
+            <label class="m-field__label" for="mf_nis">NIS</label>
+            <input class="m-field__control" id="mf_nis" type="text" inputmode="numeric" placeholder="00000000000" maxlength="11" autocomplete="off" />
+            <span class="m-field__error">NIS deve ter 11 dígitos.</span>
+          </div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+          <div class="m-field" data-mf>
+            <label class="m-field__label" for="mf_doc_estrangeiro">Documento estrangeiro</label>
+            <input class="m-field__control" id="mf_doc_estrangeiro" type="text" placeholder="Opcional" autocomplete="off" />
+          </div>
+          <div class="m-field" data-mf>
+            <label class="m-field__label" for="mf_telefone">Telefone</label>
+            <input class="m-field__control" id="mf_telefone" type="tel" placeholder="(00) 00000-0000" autocomplete="off" />
+          </div>
+        </div>
+
+        <div class="m-field" data-mf>
+          <label class="m-field__label" for="mf_email">E-mail</label>
+          <input class="m-field__control" id="mf_email" type="email" placeholder="email@exemplo.com" autocomplete="off" />
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+          <div class="m-field" data-mf>
+            <label class="m-field__label" for="mf_nome_mae">Nome da mãe</label>
+            <input class="m-field__control" id="mf_nome_mae" type="text" placeholder="Nome completo" />
+          </div>
+          <div class="m-field" data-mf>
+            <label class="m-field__label" for="mf_nome_pai">Nome do pai</label>
+            <input class="m-field__control" id="mf_nome_pai" type="text" placeholder="Nome completo" />
+          </div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+          <div class="m-field" data-mf>
+            <label class="m-field__label" for="mf_grau_parentesco">Parentesco com o chefe</label>
+            <input class="m-field__control" id="mf_grau_parentesco" type="text" placeholder="Ex.: Filho(a), Cônjuge…" />
+          </div>
+          <div class="m-field" data-mf>
+            <label class="m-field__label" for="mf_profissao">Profissão</label>
+            <input class="m-field__control" id="mf_profissao" type="text" placeholder="Profissão" />
+          </div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+          <div class="m-field" data-mf>
+            <label class="m-field__label" for="mf_escolaridade">Escolaridade</label>
+            <input class="m-field__control" id="mf_escolaridade" type="text" placeholder="Ex.: Fundamental completo" />
+          </div>
+          <div class="m-field" data-mf>
+            <label class="m-field__label" for="mf_situacao_ocupacional">Situação ocupacional</label>
+            <input class="m-field__control" id="mf_situacao_ocupacional" type="text" placeholder="Ex.: Autônomo(a)" />
+          </div>
+        </div>
+
+        <div class="m-field" data-mf>
+          <label class="m-field__label" for="mf_semanas_gestacao">Semanas de gestação (se gestante)</label>
+          <input class="m-field__control" id="mf_semanas_gestacao" type="number" min="0" step="1" placeholder="0" />
+        </div>
+
+        <div style="margin-top:8px">
+          <div style="font-size:13px;font-weight:600;color:#374151;margin-bottom:8px">Vulnerabilidades</div>
+          <div class="m-vuln-grid">
+            <label class="m-vuln-chip"><input type="checkbox" name="vuln" value="Idoso"><span>Idoso 60+</span></label>
+            <label class="m-vuln-chip"><input type="checkbox" name="vuln" value="PCD"><span>PCD</span></label>
+            <label class="m-vuln-chip"><input type="checkbox" name="vuln" value="Gestante"><span>Gestante</span></label>
+            <label class="m-vuln-chip"><input type="checkbox" name="vuln" value="Lactante"><span>Lactante</span></label>
+            <label class="m-vuln-chip"><input type="checkbox" name="vuln" value="DoencaCronica"><span>Doença crônica</span></label>
+            <label class="m-vuln-chip"><input type="checkbox" name="vuln" value="Crianca"><span>Criança</span></label>
+          </div>
+        </div>
+
+        <button type="button" class="m-btn m-btn--primary" data-add-membro style="width:100%;margin-top:16px">
+          + Adicionar membro
+        </button>
+      </div>
+    </section>
+
+    <!-- PASSO 4 — Chefe da Família -->
+    <section class="m-step" data-step="4" hidden>
+      <h1 class="m-card-title">Chefe da Família</h1>
+      <p class="m-card-sub">Selecione o responsável pelo núcleo (deve ter 18 anos ou mais)</p>
+      <div class="m-card-divider"></div>
+      <!-- Preenchido via JS com base nos membros cadastrados -->
+      <div data-chefe-list></div>
+    </section>
+
+    <!-- PASSO 5 — Pets -->
+    <section class="m-step" data-step="5" hidden>
+      <h1 class="m-card-title">Pets</h1>
+      <p class="m-card-sub">Animais de estimação do núcleo (opcional)</p>
+      <div class="m-card-divider"></div>
+
+      <div data-pets-list class="m-member-list"></div>
+
+      <div class="m-add-section">
+        <p class="m-add-section-title">Adicionar pet</p>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+          <div class="m-field" data-pf>
+            <label class="m-field__label" for="pf_tipo">Tipo</label>
+            <select class="m-field__control" id="pf_tipo">
+              <option value="">—</option>
+              <option>Cachorro</option>
+              <option>Gato</option>
+              <option>Ave</option>
+              <option>Outro</option>
+            </select>
+          </div>
+          <div class="m-field" data-pf>
+            <label class="m-field__label" for="pf_porte">Porte</label>
+            <select class="m-field__control" id="pf_porte">
+              <option value="">—</option>
+              <option>Pequeno</option>
+              <option>Médio</option>
+              <option>Grande</option>
+            </select>
+          </div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+          <div class="m-field" data-pf>
+            <label class="m-field__label" for="pf_quantidade">Quantidade</label>
+            <input class="m-field__control" id="pf_quantidade" type="number" min="1" step="1" placeholder="1" />
+          </div>
+          <div class="m-field" data-pf>
+            <label class="m-field__label" for="pf_imagem">Imagem (URL opcional)</label>
+            <input class="m-field__control" id="pf_imagem" type="text" placeholder="https://…" />
+          </div>
+        </div>
+
+        <button type="button" class="m-btn m-btn--primary" data-add-pet style="width:100%;margin-top:6px">
+          + Adicionar pet
+        </button>
+      </div>
+    </section>
+
+    <!-- PASSO 6 — Revisão e Envio -->
+    <section class="m-step" data-step="6" hidden>
+      <h1 class="m-card-title">Revisão</h1>
+      <p class="m-card-sub">Confirme os dados antes de enviar</p>
+      <div class="m-card-divider"></div>
+      <div class="m-toast-ok" data-toast-ok>✓ Cadastro enviado com sucesso!</div>
+      <div class="m-error-net" data-error-net></div>
+      <!-- Preenchido via JS -->
+      <div data-revisao-content></div>
+    </section>
+
+    <!-- PASSO 7 — Sucesso (fora do stepper) -->
+    <section class="m-step" data-step="7" hidden>
+      <div class="m-success">
+        <div class="m-success__circles">
+          <div class="m-success__ring m-success__ring--1"></div>
+          <div class="m-success__ring m-success__ring--2"></div>
+          <div class="m-success__ring m-success__ring--3"><span class="m-success__check">✓</span></div>
+        </div>
+        <h2 class="m-success__title">Cadastro Enviado!</h2>
+        <p class="m-success__desc" data-success-desc>Os dados foram salvos com sucesso.</p>
+        <span class="m-success__proto" data-success-proto>Protocolo: —</span>
+        <div class="m-success__actions">
+          <button type="button" class="m-btn m-btn--primary" data-novo-cadastro>+ Cadastrar nova família</button>
+          <button type="button" class="m-btn m-btn--ghost"   data-ir-analise-dados>&larr; Voltar ao início</button>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="m-footer" data-footer>
+    <span class="m-footer__hint" data-step-hint>Passo 1 de 5</span>
+    <div class="m-footer__actions">
+      <button type="button" class="m-btn m-btn--ghost"   data-prev hidden>&larr; Voltar</button>
+      <button type="button" class="m-btn m-btn--primary" data-next>Avançar &rarr;</button>
+      <button type="button" class="m-btn m-btn--primary" data-submit hidden>✓&nbsp;Confirmar e Enviar</button>
+    </div>
+  </footer>
+
+</div>
+
+<script src="/js/api.js"></script>
+<script src="/js/agente-cadastro.js"></script>
+</body>
+</html>

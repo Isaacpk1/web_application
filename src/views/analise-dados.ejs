@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <%- include('partials/head', { title: 'GeoRisco — Análise de Dados' }) %>
+</head>
+<body>
+  <%- include('partials/navbar', { active: 'analise-dados' }) %>
+
+  <main class="page">
+    <h1 class="page-title">Análise de Dados</h1>
+    <p class="page-subtitle">Visão geral dos núcleos familiares, risco e vulnerabilidade.</p>
+
+    <!-- KPIs -->
+    <section class="kpi-grid" aria-label="Indicadores">
+      <article class="kpi-card">
+        <div class="kpi-card__top">
+          <span class="kpi-card__label">Famílias cadastradas</span>
+          <span class="kpi-card__icon">&#128106;</span>
+        </div>
+        <div class="kpi-card__value" id="kpiTotal">—</div>
+        <div class="kpi-card__sub">total no sistema</div>
+      </article>
+      <article class="kpi-card">
+        <div class="kpi-card__top">
+          <span class="kpi-card__label">Prioridade alta</span>
+          <span class="kpi-card__icon" style="background:#fdeaea;color:var(--color-red);">&#9888;</span>
+        </div>
+        <div class="kpi-card__value" id="kpiAlta">—</div>
+        <div class="kpi-card__sub">nesta página</div>
+      </article>
+      <article class="kpi-card">
+        <div class="kpi-card__top">
+          <span class="kpi-card__label">Cadastros completos</span>
+          <span class="kpi-card__icon" style="background:#e6f7ee;color:var(--color-green);">&#10003;</span>
+        </div>
+        <div class="kpi-card__value" id="kpiCompletos">—</div>
+        <div class="kpi-card__sub">nesta página</div>
+      </article>
+    </section>
+
+    <!-- Filtros -->
+    <section class="toolbar" aria-label="Filtros">
+      <div class="form-field">
+        <label for="filtroNome">Buscar por nome</label>
+        <input type="text" id="filtroNome" class="form-control" placeholder="Nome da família..." />
+      </div>
+      <div class="form-field">
+        <label for="filtroBairro">Bairro</label>
+        <input type="text" id="filtroBairro" class="form-control" placeholder="Bairro / região" />
+      </div>
+      <div class="form-field">
+        <label for="filtroCpf">CPF</label>
+        <input type="text" id="filtroCpf" class="form-control" placeholder="000.000.000-00" />
+      </div>
+      <div class="toolbar__actions">
+        <button class="btn btn--blue" id="btnAplicar">Aplicar filtros</button>
+        <button class="btn btn--ghost" id="btnLimpar">Limpar</button>
+        <a class="btn btn--green" href="/agente/cadastro">+ Nova família</a>
+      </div>
+    </section>
+
+    <!-- Tabela -->
+    <section class="table-wrapper">
+      <div class="table-scroll">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Família</th>
+              <th>Responsável</th>
+              <th>Bairro</th>
+              <th>Risco</th>
+              <th>Membros</th>
+              <th>Renda familiar</th>
+              <th>Ações</th>
+            </tr>
+          </thead>
+          <tbody id="tabelaCorpo">
+            <tr><td colspan="7" class="loading-state">Carregando cadastros...</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="table-footer">
+        <span class="table-footer__info" id="infoRegistros"></span>
+        <div class="pagination" id="paginacao"></div>
+      </div>
+    </section>
+  </main>
+
+  <script src="/js/api.js"></script>
+  <script src="/js/analise-dados.js"></script>
+</body>
+</html>

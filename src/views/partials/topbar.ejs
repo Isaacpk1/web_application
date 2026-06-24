@@ -1,0 +1,19 @@
+<header class="topbar">
+  <h1 class="topbar__title"><%= pageTitle %></h1>
+  <div class="topbar__right">
+    <% if (typeof actionBtn !== 'undefined' && actionBtn) { %>
+      <a href="<%= actionBtn.href %>" class="topbar__action-btn"><%= actionBtn.label %></a>
+    <% } %>
+    <span class="topbar__date" id="topbar-date"></span>
+    <div class="user-pill" data-nav-user>
+      <div class="user-avatar">M</div>
+      <div>
+        <div class="user-name">Maria Silva</div>
+        <div class="user-role">Gestora</div>
+      </div>
+    </div>
+  </div>
+</header>
+<script>
+  document.getElementById('topbar-date').textContent = new Date().toLocaleDateString('pt-BR', { day: '2-digit', month: 'short', year: 'numeric' });
+</script>

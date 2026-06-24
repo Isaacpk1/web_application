@@ -1,0 +1,32 @@
+<aside class="sidebar">
+  <div class="sidebar__logo">
+    <div class="sidebar__badge">G</div>
+    <div>
+      <div class="sidebar__name">GeoRisco</div>
+      <div class="sidebar__sub">Santo André</div>
+    </div>
+  </div>
+  <div class="sidebar__section">Menu</div>
+  <nav class="sidebar__nav">
+    <a href="/admin/analise-dados" class="nav-item <%= active === 'analise-dados' ? 'is-active' : '' %>">
+      <span class="nav-item__icon">⊞</span> Análise de Dados
+    </a>
+    <a href="/familias" class="nav-item <%= active === 'familias' ? 'is-active' : '' %>">
+      <span class="nav-item__icon">👨‍👩‍👧</span> Famílias
+    </a>
+    <a href="/mapa" class="nav-item <%= active === 'mapa' ? 'is-active' : '' %>">
+      <span class="nav-item__icon">🗺</span> Mapa de Risco
+    </a>
+    <a href="/completude" class="nav-item <%= active === 'completude' ? 'is-active' : '' %>">
+      <span class="nav-item__icon">✓</span> Completude
+    </a>
+    <a href="/relatorios" class="nav-item <%= active === 'relatorios' ? 'is-active' : '' %>">
+      <span class="nav-item__icon">📊</span> Relatórios
+    </a>
+  </nav>
+  <div style="padding: 16px 20px; border-top: 1px solid rgba(255,255,255,.08);">
+    <button data-logout style="color: rgba(255,255,255,.5); font-size: 13px; display: flex; align-items: center; gap: 8px; width: 100%; background:none; border:none; cursor:pointer;">
+      <span>⏻</span> Sair
+    </button>
+  </div>
+</aside>

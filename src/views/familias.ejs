@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head><%- include('partials/head', { title }) %></head>
+<body>
+<div class="layout">
+  <%- include('partials/sidebar', { active: 'familias' }) %>
+  <div class="main">
+    <%- include('partials/topbar', {
+      pageTitle: 'Famílias',
+      actionBtn: { href: '/agente/cadastro', label: '+ Novo Cadastro' }
+    }) %>
+    <div class="page-content">
+
+      <!-- Cabeçalho da seção -->
+      <div class="content-head" style="margin-bottom:20px;">
+        <div>
+          <h2 style="font-size:22px;font-weight:700;color:#2c3e50;margin-bottom:4px;">Cadastro de Famílias</h2>
+          <p style="font-size:13px;color:#6b7280;" id="familias-subtitle">Carregando...</p>
+        </div>
+        <button class="btn btn--export" id="btn-export">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Exportar dados
+        </button>
+      </div>
+
+      <!-- Layout: sidebar de filtros (esquerda) + tabela (direita) -->
+      <div class="app-shell" style="padding:0;margin:0;max-width:none;">
+
+        <!-- Sidebar de filtros -->
+        <aside class="sidebar">
+          <h2 class="sidebar__title">Filtros</h2>
+          <hr class="sidebar__divider">
+
+          <div class="form-field search-field">
+            <label for="search-input">Buscar</label>
+            <svg class="search-ico" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+            <input type="search" id="search-input" class="form-control"
+                   placeholder="Buscar família..." autocomplete="off" />
+          </div>
+
+          <div class="form-field">
+            <label for="filter-risco">Nível de Risco</label>
+            <select id="filter-risco" class="form-control">
+              <option value="">Todos os níveis</option>
+              <option value="MUITO_ALTO">Muito Alto</option>
+              <option value="ALTO">Alto</option>
+              <option value="MEDIO">Médio</option>
+              <option value="BAIXO">Baixo</option>
+            </select>
+          </div>
+
+          <div class="form-field">
+            <label for="filter-bairro">Bairro / Região</label>
+            <input type="text" id="filter-bairro" class="form-control" placeholder="Selecione..." />
+          </div>
+
+          <button class="btn btn--sias btn--block" id="btn-apply-filter" style="margin-top:8px;">
+            Aplicar filtros
+          </button>
+          <button class="btn-textlink" id="btn-clear-filter">Limpar filtros</button>
+        </aside>
+
+        <!-- Área da tabela -->
+        <div>
+          <div class="table-wrapper">
+            <div class="table-scroll" id="table-wrap">
+              <div class="state-loading">Carregando…</div>
+            </div>
+            <div class="table-footer" id="table-footer" style="display:none;">
+              <span class="table-footer__info" id="pag-info"></span>
+              <div class="pagination" id="pag-pages"></div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+<script src="/js/api.js"></script>
+<script src="/js/familias.js"></script>
+</body>
+</html>
