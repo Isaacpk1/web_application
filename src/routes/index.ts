@@ -11,6 +11,7 @@ import { individuoRoutes } from './individuoRoutes';
 import { setorRoutes } from './setorRoutes';
 import { vulnerabilidadeRoutes } from './vulnerabilidadeRoutes';
 import { petRoutes } from './petRoutes';
+import { uploadRoutes } from './uploadRoutes';
 
 const router = Router();
 
@@ -29,5 +30,6 @@ router.use('/setores', setorRoutes);
 router.use('/setores-risco', setorRoutes);
 router.use('/vulnerabilidades', vulnerabilidadeRoutes);
 router.use('/pets', petRoutes);
+router.use('/uploads', uploadRoutes);
 
 export { router };

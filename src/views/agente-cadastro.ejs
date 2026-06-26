@@ -313,12 +313,14 @@
 
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
         <div class="m-field" data-field>
-          <label class="m-field__label" for="m_foto_fachada_url">Foto da fachada (URL)</label>
-          <input class="m-field__control" id="m_foto_fachada_url" type="url" placeholder="https://..." autocomplete="off" />
+          <label class="m-field__label" for="m_foto_fachada_file">Foto da fachada</label>
+          <input class="m-field__control" id="m_foto_fachada_file" type="file" accept="image/*" capture="environment" data-image-upload="casa_fachada" data-image-target="m_foto_fachada_url" />
+          <input id="m_foto_fachada_url" type="hidden" />
         </div>
         <div class="m-field" data-field>
-          <label class="m-field__label" for="m_foto_detalhe_url">Foto complementar (URL)</label>
-          <input class="m-field__control" id="m_foto_detalhe_url" type="url" placeholder="https://..." autocomplete="off" />
+          <label class="m-field__label" for="m_foto_detalhe_file">Foto complementar</label>
+          <input class="m-field__control" id="m_foto_detalhe_file" type="file" accept="image/*" capture="environment" data-image-upload="casa_detalhe" data-image-target="m_foto_detalhe_url" />
+          <input id="m_foto_detalhe_url" type="hidden" />
         </div>
       </div>
     </section>
@@ -493,8 +495,9 @@
         </div>
 
         <div class="m-field" data-mf>
-          <label class="m-field__label" for="mf_foto_url">Foto da pessoa (URL)</label>
-          <input class="m-field__control" id="mf_foto_url" type="url" placeholder="https://..." autocomplete="off" />
+          <label class="m-field__label" for="mf_foto_file">Foto da pessoa</label>
+          <input class="m-field__control" id="mf_foto_file" type="file" accept="image/*" capture="environment" data-image-upload="individuo" data-image-target="mf_foto_url" />
+          <input id="mf_foto_url" type="hidden" />
         </div>
 
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
@@ -601,8 +604,9 @@
             <input class="m-field__control" id="pf_quantidade" type="number" min="1" step="1" placeholder="1" />
           </div>
           <div class="m-field" data-pf>
-            <label class="m-field__label" for="pf_imagem">Imagem (URL opcional)</label>
-            <input class="m-field__control" id="pf_imagem" type="text" placeholder="https://…" />
+            <label class="m-field__label" for="pf_imagem_file">Imagem do pet</label>
+            <input class="m-field__control" id="pf_imagem_file" type="file" accept="image/*" capture="environment" data-image-upload="pet" data-image-target="pf_imagem" />
+            <input id="pf_imagem" type="hidden" />
           </div>
         </div>
 

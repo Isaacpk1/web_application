@@ -87,6 +87,35 @@ async function apiFetch(path, options = {}) {
   return body && 'data' in body ? body.data : body;
 }
 
+async function apiUploadImage(file, categoria) {
+  const token = Auth.getToken();
+  const formData = new FormData();
+  formData.append('imagem', file);
+  formData.append('categoria', categoria);
+
+  const res = await fetch(`${API_BASE}/uploads/imagens`, {
+    method: 'POST',
+    headers: {
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    },
+    body: formData,
+  });
+
+  if (res.status === 401) {
+    Auth.clear();
+    window.location.href = '/login';
+    throw new Error('Sessao expirada. Faca login novamente.');
+  }
+
+  const body = await res.json().catch(() => null);
+  if (!res.ok) {
+    const message = (body && (body.error || body.message)) || `Erro ${res.status}`;
+    throw new Error(message);
+  }
+
+  return body && 'data' in body ? body.data : body;
+}
+
 /* ---------------------------------------------------------------------------
    UI helpers compartilhados
    --------------------------------------------------------------------------- */

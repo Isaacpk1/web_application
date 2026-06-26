@@ -14,6 +14,7 @@ interface EnvConfig {
   supabaseUrl: string;
   supabaseServiceRoleKey: string;
   supabaseAnonKey: string;
+  supabaseStorageBucket: string;
 }
 
 /**
@@ -50,4 +51,5 @@ export const env: EnvConfig = {
   supabaseUrl: requireEnv('SUPABASE_URL'),
   supabaseServiceRoleKey: requireEnv('SUPABASE_SERVICE_ROLE_KEY', ['DATABASE_KEY', 'SUPABASE_KEY']),
   supabaseAnonKey: requireEnv('SUPABASE_ANON_KEY'),
+  supabaseStorageBucket: process.env.SUPABASE_STORAGE_BUCKET ?? 'cadastro-imagens',
 };

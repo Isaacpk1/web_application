@@ -108,6 +108,30 @@
     return r === Number(cpf[10]);
   }
 
+  function bindImageUploads() {
+    root.querySelectorAll('[data-image-upload]').forEach((input) => {
+      input.addEventListener('change', async () => {
+        const file = input.files?.[0];
+        if (!file) return;
+
+        const target = document.getElementById(input.dataset.imageTarget);
+        input.disabled = true;
+        try {
+          showToast('Enviando imagem...', 'info');
+          const result = await apiUploadImage(file, input.dataset.imageUpload);
+          if (target) target.value = result.url;
+          showToast('Imagem enviada com sucesso.', 'success');
+        } catch (err) {
+          input.value = '';
+          if (target) target.value = '';
+          showToast(err.message || 'Nao foi possivel enviar a imagem.', 'error');
+        } finally {
+          input.disabled = false;
+        }
+      });
+    });
+  }
+
   /* ── showStep ────────────────────────────────────────────────────── */
 
   function showStep(n) {
@@ -358,6 +382,7 @@
       if (el) el.value = '';
     });
     document.getElementById('mf_status_vital').value = 'Vivo';
+    document.getElementById('mf_foto_file').value = '';
     document.getElementById('mf_field_data_obito').hidden = true;
     root.querySelectorAll('[data-membro-form] input[name="vuln"]').forEach((cb) => { cb.checked = false; });
     root.querySelectorAll('[data-mf]').forEach((f) => f.classList.remove('is-invalid'));
@@ -424,6 +449,7 @@
       const el = document.getElementById(id);
       if (el) el.value = '';
     });
+    document.getElementById('pf_imagem_file').value = '';
 
     renderPetsList();
   }
@@ -672,7 +698,12 @@
     state.pets     = [];
 
     root.querySelectorAll('input:not([type="hidden"]), select').forEach((el) => { el.value = ''; });
+    ['m_foto_fachada_url', 'm_foto_detalhe_url', 'mf_foto_url', 'pf_imagem'].forEach((id) => {
+      const el = document.getElementById(id);
+      if (el) el.value = '';
+    });
     document.getElementById('m_status_imovel').value = 'Sadio';
+    root.querySelectorAll('[data-image-upload]').forEach((input) => { input.value = ''; });
     document.getElementById('m_field_data_interdicao').hidden = true;
     document.getElementById('mf_status_vital').value = 'Vivo';
     document.getElementById('mf_field_data_obito').hidden = true;
@@ -701,5 +732,6 @@
 
   /* ── init ────────────────────────────────────────────────────────── */
   loadSetores();
+  bindImageUploads();
   showStep(1);
 })();
