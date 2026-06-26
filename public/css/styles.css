@@ -1091,17 +1091,33 @@ body.theme-dark .m-map__pin .dot {
 .m-stepper {
   background: #fff; padding: 14px 20px 0;
   border-bottom: 1px solid #e0e0eb;
-  position: sticky; top: 52px; z-index: 19;
+  position: sticky; top: 0; z-index: 40;
+  box-shadow: 0 8px 18px rgba(15, 23, 42, 0.06);
 }
-.m-stepper__row { display: flex; justify-content: space-between; align-items: flex-start; }
-.m-step-item { display: flex; flex-direction: column; align-items: center; gap: 8px; flex: 1 1 0; }
+.m-stepper__row {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  align-items: start;
+  gap: 0;
+}
+.m-step-item { display: flex; flex-direction: column; align-items: center; gap: 6px; min-width: 0; }
 .m-step-item__dot {
-  width: 38px; height: 38px; border-radius: 50%;
+  width: 32px; height: 32px; flex: 0 0 32px; border-radius: 50%;
   background: #e0e0eb; color: #8c8c99;
   display: flex; align-items: center; justify-content: center;
-  font-size: 15px; font-weight: 700; transition: background 0.3s, color 0.3s;
+  font-size: 13px; line-height: 1; font-weight: 700; transition: background 0.3s, color 0.3s;
 }
-.m-step-item__label { font-size: 11px; color: #8c8c99; transition: color 0.3s; text-align: center; }
+.m-step-item__label {
+  max-width: 100%;
+  font-size: 11px;
+  line-height: 1.2;
+  color: #8c8c99;
+  transition: color 0.3s;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
 .m-step-item.is-active .m-step-item__dot { background: var(--color-brand); color: #fff; }
 .m-step-item.is-active .m-step-item__label { color: var(--color-brand); font-weight: 600; }
 .m-step-item.is-done .m-step-item__dot { background: #22c55e; color: #fff; }
@@ -1110,6 +1126,11 @@ body.theme-dark .m-map__pin .dot {
 .m-step-item.is-done .m-step-item__dot::after { content: '✓'; font-size: 16px; }
 .m-stepper__track { height: 3px; background: #e0e0eb; border-radius: 2px; margin-top: 14px; overflow: hidden; }
 .m-stepper__fill { height: 100%; background: var(--color-brand); border-radius: 2px; width: 25%; transition: width 0.35s ease; }
+
+@media (max-width: 520px) {
+  .m-stepper { padding: 12px 14px 8px; }
+  .m-step-item__label { display: none; }
+}
 
 /* Corpo rolável */
 .m-body { flex: 1 1 auto; overflow-y: auto; padding: 20px; }

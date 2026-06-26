@@ -24,13 +24,21 @@
     }
 
     /* ── Stepper ── */
-    .m-stepper { padding: 14px 16px 10px; background: #fff; border-bottom: 1px solid #E5E7EB; }
-    .m-stepper__row { display: flex; justify-content: space-between; position: relative; margin-bottom: 8px; }
+    .m-stepper {
+      position: sticky;
+      top: 0;
+      z-index: 40;
+      padding: 14px 16px 10px;
+      background: #fff;
+      border-bottom: 1px solid #E5E7EB;
+      box-shadow: 0 8px 18px rgba(15, 23, 42, 0.06);
+    }
+    .m-stepper__row { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); align-items: start; gap: 0; position: relative; margin-bottom: 8px; }
     .m-stepper__track { height: 3px; background: #E5E7EB; border-radius: 2px; overflow: hidden; }
     .m-stepper__fill  { height: 100%; background: var(--brand, #F97316); border-radius: 2px; transition: width .4s ease; }
-    .m-step-item { display: flex; flex-direction: column; align-items: center; gap: 4px; flex: 1; cursor: pointer; }
-    .m-step-item__dot { width: 28px; height: 28px; border-radius: 50%; background: #E5E7EB; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; color: #9CA3AF; transition: background .3s, color .3s; }
-    .m-step-item__label { font-size: 10px; color: #9CA3AF; font-weight: 500; transition: color .3s; }
+    .m-step-item { display: flex; flex-direction: column; align-items: center; gap: 4px; min-width: 0; cursor: pointer; }
+    .m-step-item__dot { width: 28px; height: 28px; flex: 0 0 28px; border-radius: 50%; background: #E5E7EB; display: flex; align-items: center; justify-content: center; font-size: 12px; line-height: 1; font-weight: 700; color: #9CA3AF; transition: background .3s, color .3s; }
+    .m-step-item__label { max-width: 100%; font-size: 10px; line-height: 1.2; color: #9CA3AF; font-weight: 500; transition: color .3s; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .m-step-item.is-active .m-step-item__dot  { background: #F97316; color: #fff; }
     .m-step-item.is-active .m-step-item__label { color: #F97316; }
     .m-step-item.is-done .m-step-item__dot    { background: #22c55e; color: #fff; }
@@ -211,6 +219,12 @@
       .m-body    { padding: 28px 48px 90px; }
       .m-stepper { padding: 16px 48px 12px; }
       .m-footer  { padding: 14px 48px; }
+    }
+
+    @media (max-width: 520px) {
+      .m-stepper { padding: 12px 14px 8px; }
+      .m-step-item__label { display: none; }
+      .m-stepper__row { margin-bottom: 10px; }
     }
 
     @media (min-width: 1200px) {
@@ -705,7 +719,7 @@
 
   <!-- Footer -->
   <footer class="m-footer" data-footer>
-    <span class="m-footer__hint" data-step-hint>Passo 1 de 5</span>
+    <span class="m-footer__hint" data-step-hint>Passo 1 de 6</span>
     <div class="m-footer__actions">
       <button type="button" class="m-btn m-btn--ghost"   data-prev hidden>&larr; Voltar</button>
       <button type="button" class="m-btn m-btn--primary" data-next>Avançar &rarr;</button>
