@@ -142,15 +142,15 @@
       return `<div class="admin-member" data-individuo-id="${individuo.id}"><h4>${individuo.nome_completo}</h4>
         <label>Nome <input data-ind-campo="nome_completo" value="${individuo.nome_completo || ''}" ${disabled}></label>
         <label>Telefone <input data-ind-campo="telefone" value="${individuo.telefone || ''}" ${disabled}></label>
-        <label>E-mail <input data-ind-campo="email" value="${individuo.email || ''}" ${disabled}></label><label>Foto (URL) <input data-ind-campo="foto_url" value="${individuo.foto_url || ''}" ${disabled}></label>
+        <label>E-mail <input data-ind-campo="email" value="${individuo.email || ''}" ${disabled}></label><label>Foto <input type="file" accept="image/*" capture="environment" data-admin-image-upload="individuo" data-admin-image-target="[data-ind-campo='foto_url']" ${disabled}><input type="hidden" data-ind-campo="foto_url" value="${individuo.foto_url || ''}"></label>
         <div class="admin-vulns">${dados.catalogoVulnerabilidades.map((v) => `<label><input type="checkbox" data-vuln-id="${v.id}" ${atuais.has(v.id) ? 'checked' : ''} ${disabled}> ${v.tipo_vulnerabilidade}</label>`).join('')}</div></div>`;
     }).join('');
-    const pets = dados.pets.map((pet) => `<div class="admin-pet" data-pet-id="${pet.id}"><input data-pet-campo="tipo" value="${pet.tipo || ''}" placeholder="Tipo" ${disabled}><input data-pet-campo="porte" value="${pet.porte || ''}" placeholder="Porte" ${disabled}><input data-pet-campo="quantidade" type="number" min="1" value="${pet.quantidade || ''}" placeholder="Qtd." ${disabled}><input data-pet-campo="imagem" value="${pet.imagem || ''}" placeholder="Imagem (URL)" ${disabled}>${somenteLeitura ? '' : '<button type="button" class="btn-textlink" data-remover-pet>Remover</button>'}</div>`).join('') || '<p data-sem-pets>Nenhum pet cadastrado.</p>';
+    const pets = dados.pets.map((pet) => `<div class="admin-pet" data-pet-id="${pet.id}"><input data-pet-campo="tipo" value="${pet.tipo || ''}" placeholder="Tipo" ${disabled}><input data-pet-campo="porte" value="${pet.porte || ''}" placeholder="Porte" ${disabled}><input data-pet-campo="quantidade" type="number" min="1" value="${pet.quantidade || ''}" placeholder="Qtd." ${disabled}><label>Imagem <input type="file" accept="image/*" capture="environment" data-admin-image-upload="pet" data-admin-image-target="[data-pet-campo='imagem']" ${disabled}><input type="hidden" data-pet-campo="imagem" value="${pet.imagem || ''}"></label>${somenteLeitura ? '' : '<button type="button" class="btn-textlink" data-remover-pet>Remover</button>'}</div>`).join('') || '<p data-sem-pets>Nenhum pet cadastrado.</p>';
     const painel = document.createElement('section');
     painel.id = 'familia-painel';
     painel.className = 'section-card';
     painel.innerHTML = `<div class="content-head"><h2>${somenteLeitura ? 'Detalhes da família' : 'Editar família'}</h2><button class="btn btn--ghost" data-fechar-painel>Fechar</button></div>
-      <div class="admin-grid"><label>Núcleo<input data-nucleo="nome_nucleo" value="${dados.nucleo.nome_nucleo || ''}" ${disabled}></label><label>Renda<input data-nucleo="renda_familiar_total" type="number" min="0" value="${dados.nucleo.renda_familiar_total ?? ''}" ${disabled}></label><label>Observação<textarea data-nucleo="observacao" ${disabled}>${dados.nucleo.observacao || ''}</textarea></label><label>Logradouro<input data-casa="logradouro" value="${casa.logradouro || ''}" ${disabled}></label><label>Número<input data-casa="numero" value="${casa.numero || ''}" ${disabled}></label><label>Bairro<input data-casa="bairro" value="${casa.bairro || ''}" ${disabled}></label><label>CEP<input data-casa="cep" value="${casa.cep || ''}" ${disabled}></label><label>Foto da fachada (URL)<input data-casa="foto_fachada_url" value="${casa.foto_fachada_url || ''}" ${disabled}></label><label>Foto complementar (URL)<input data-casa="foto_detalhe_url" value="${casa.foto_detalhe_url || ''}" ${disabled}></label></div>
+      <div class="admin-grid"><label>Núcleo<input data-nucleo="nome_nucleo" value="${dados.nucleo.nome_nucleo || ''}" ${disabled}></label><label>Renda<input data-nucleo="renda_familiar_total" type="number" min="0" value="${dados.nucleo.renda_familiar_total ?? ''}" ${disabled}></label><label>Observação<textarea data-nucleo="observacao" ${disabled}>${dados.nucleo.observacao || ''}</textarea></label><label>Logradouro<input data-casa="logradouro" value="${casa.logradouro || ''}" ${disabled}></label><label>Número<input data-casa="numero" value="${casa.numero || ''}" ${disabled}></label><label>Bairro<input data-casa="bairro" value="${casa.bairro || ''}" ${disabled}></label><label>CEP<input data-casa="cep" value="${casa.cep || ''}" ${disabled}></label><label>Foto da fachada<input type="file" accept="image/*" capture="environment" data-admin-image-upload="casa_fachada" data-admin-image-target="[data-casa='foto_fachada_url']" ${disabled}><input type="hidden" data-casa="foto_fachada_url" value="${casa.foto_fachada_url || ''}"></label><label>Foto complementar<input type="file" accept="image/*" capture="environment" data-admin-image-upload="casa_detalhe" data-admin-image-target="[data-casa='foto_detalhe_url']" ${disabled}><input type="hidden" data-casa="foto_detalhe_url" value="${casa.foto_detalhe_url || ''}"></label></div>
       <h3>Membros e vulnerabilidades</h3>${vulnerabilidades}<h3>Pets</h3><div data-pets-admin>${pets}</div>${somenteLeitura ? '' : '<button type="button" class="btn btn--ghost" data-adicionar-pet>Adicionar pet</button> <button class="btn btn--blue" data-salvar-familia>Salvar alterações</button>'}`;
     document.querySelector('.page-content').prepend(painel);
     painel.querySelector('[data-fechar-painel]').addEventListener('click', () => painel.remove());
@@ -160,9 +160,10 @@
       const card = document.createElement('div');
       card.className = 'admin-pet';
       card.dataset.petId = 'novo';
-      card.innerHTML = '<input data-pet-campo="tipo" placeholder="Tipo"><input data-pet-campo="porte" placeholder="Porte"><input data-pet-campo="quantidade" type="number" min="1" placeholder="Qtd."><input data-pet-campo="imagem" placeholder="Imagem (URL)"><button type="button" class="btn-textlink" data-remover-pet>Remover</button>';
+      card.innerHTML = `<input data-pet-campo="tipo" placeholder="Tipo"><input data-pet-campo="porte" placeholder="Porte"><input data-pet-campo="quantidade" type="number" min="1" placeholder="Qtd."><label>Imagem <input type="file" accept="image/*" capture="environment" data-admin-image-upload="pet" data-admin-image-target="[data-pet-campo='imagem']"><input type="hidden" data-pet-campo="imagem"></label><button type="button" class="btn-textlink" data-remover-pet>Remover</button>`;
       painel.querySelector('[data-pets-admin]').appendChild(card);
       card.querySelector('[data-remover-pet]').addEventListener('click', () => card.remove());
+      bindPainelUploads(card);
     });
     painel.querySelectorAll('[data-remover-pet]').forEach((btn) => {
       btn.addEventListener('click', () => {
@@ -173,9 +174,35 @@
         card.remove();
       });
     });
+    bindPainelUploads(painel);
     painel.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
 
+
+  function bindPainelUploads(painel) {
+    painel.querySelectorAll('[data-admin-image-upload]').forEach((input) => {
+      input.addEventListener('change', async () => {
+        const file = input.files?.[0];
+        if (!file) return;
+
+        const scope = input.closest('[data-individuo-id], [data-pet-id]') || painel;
+        const target = scope.querySelector(input.dataset.adminImageTarget);
+        input.disabled = true;
+        try {
+          showToast('Enviando imagem...', 'info');
+          const result = await apiUploadImage(file, input.dataset.adminImageUpload);
+          if (target) target.value = result.url;
+          showToast('Imagem enviada.', 'success');
+        } catch (err) {
+          input.value = '';
+          if (target) target.value = '';
+          showToast(err.message || 'Nao foi possivel enviar a imagem.', 'error');
+        } finally {
+          input.disabled = false;
+        }
+      });
+    });
+  }
   async function salvarPainel(dados, painel) {
     try {
       const valor = (seletor) => painel.querySelector(seletor)?.value.trim() || '';
