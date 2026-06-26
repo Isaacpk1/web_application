@@ -137,20 +137,29 @@
     const somenteLeitura = !dados.editar;
     const disabled = somenteLeitura ? 'disabled' : '';
     const casa = dados.casa || {};
+    const imagePreview = (url, alt) => url
+      ? `<a class="admin-photo-preview" href="${url}" target="_blank" rel="noopener"><img src="${url}" alt="${alt}" loading="lazy"></a>`
+      : '<span class="admin-photo-empty">Sem imagem</span>';
+    const imageField = (label, url, category, targetSelector, hiddenAttr, alt) => `
+      <label class="admin-photo-field">${label}
+        ${imagePreview(url, alt)}
+        ${somenteLeitura ? '' : `<input type="file" accept="image/*" capture="environment" data-admin-image-upload="${category}" data-admin-image-target="${targetSelector}">`}
+        <input type="hidden" ${hiddenAttr} value="${url || ''}">
+      </label>`;
     const vulnerabilidades = dados.individuos.map((individuo, indice) => {
       const atuais = new Set((dados.vinculos[indice] || []).map((v) => v.id));
       return `<div class="admin-member" data-individuo-id="${individuo.id}"><h4>${individuo.nome_completo}</h4>
         <label>Nome <input data-ind-campo="nome_completo" value="${individuo.nome_completo || ''}" ${disabled}></label>
         <label>Telefone <input data-ind-campo="telefone" value="${individuo.telefone || ''}" ${disabled}></label>
-        <label>E-mail <input data-ind-campo="email" value="${individuo.email || ''}" ${disabled}></label><label>Foto <input type="file" accept="image/*" capture="environment" data-admin-image-upload="individuo" data-admin-image-target="[data-ind-campo='foto_url']" ${disabled}><input type="hidden" data-ind-campo="foto_url" value="${individuo.foto_url || ''}"></label>
+        <label>E-mail <input data-ind-campo="email" value="${individuo.email || ''}" ${disabled}></label>${imageField('Foto', individuo.foto_url, 'individuo', "[data-ind-campo='foto_url']", 'data-ind-campo="foto_url"', `Foto de ${individuo.nome_completo || 'membro'}`)}
         <div class="admin-vulns">${dados.catalogoVulnerabilidades.map((v) => `<label><input type="checkbox" data-vuln-id="${v.id}" ${atuais.has(v.id) ? 'checked' : ''} ${disabled}> ${v.tipo_vulnerabilidade}</label>`).join('')}</div></div>`;
     }).join('');
-    const pets = dados.pets.map((pet) => `<div class="admin-pet" data-pet-id="${pet.id}"><input data-pet-campo="tipo" value="${pet.tipo || ''}" placeholder="Tipo" ${disabled}><input data-pet-campo="porte" value="${pet.porte || ''}" placeholder="Porte" ${disabled}><input data-pet-campo="quantidade" type="number" min="1" value="${pet.quantidade || ''}" placeholder="Qtd." ${disabled}><label>Imagem <input type="file" accept="image/*" capture="environment" data-admin-image-upload="pet" data-admin-image-target="[data-pet-campo='imagem']" ${disabled}><input type="hidden" data-pet-campo="imagem" value="${pet.imagem || ''}"></label>${somenteLeitura ? '' : '<button type="button" class="btn-textlink" data-remover-pet>Remover</button>'}</div>`).join('') || '<p data-sem-pets>Nenhum pet cadastrado.</p>';
+    const pets = dados.pets.map((pet) => `<div class="admin-pet" data-pet-id="${pet.id}"><input data-pet-campo="tipo" value="${pet.tipo || ''}" placeholder="Tipo" ${disabled}><input data-pet-campo="porte" value="${pet.porte || ''}" placeholder="Porte" ${disabled}><input data-pet-campo="quantidade" type="number" min="1" value="${pet.quantidade || ''}" placeholder="Qtd." ${disabled}>${imageField('Imagem', pet.imagem, 'pet', "[data-pet-campo='imagem']", 'data-pet-campo="imagem"', `Imagem do pet ${pet.tipo || ''}`)}${somenteLeitura ? '' : '<button type="button" class="btn-textlink" data-remover-pet>Remover</button>'}</div>`).join('') || '<p data-sem-pets>Nenhum pet cadastrado.</p>';
     const painel = document.createElement('section');
     painel.id = 'familia-painel';
     painel.className = 'section-card';
     painel.innerHTML = `<div class="content-head"><h2>${somenteLeitura ? 'Detalhes da família' : 'Editar família'}</h2><button class="btn btn--ghost" data-fechar-painel>Fechar</button></div>
-      <div class="admin-grid"><label>Núcleo<input data-nucleo="nome_nucleo" value="${dados.nucleo.nome_nucleo || ''}" ${disabled}></label><label>Renda<input data-nucleo="renda_familiar_total" type="number" min="0" value="${dados.nucleo.renda_familiar_total ?? ''}" ${disabled}></label><label>Observação<textarea data-nucleo="observacao" ${disabled}>${dados.nucleo.observacao || ''}</textarea></label><label>Logradouro<input data-casa="logradouro" value="${casa.logradouro || ''}" ${disabled}></label><label>Número<input data-casa="numero" value="${casa.numero || ''}" ${disabled}></label><label>Bairro<input data-casa="bairro" value="${casa.bairro || ''}" ${disabled}></label><label>CEP<input data-casa="cep" value="${casa.cep || ''}" ${disabled}></label><label>Foto da fachada<input type="file" accept="image/*" capture="environment" data-admin-image-upload="casa_fachada" data-admin-image-target="[data-casa='foto_fachada_url']" ${disabled}><input type="hidden" data-casa="foto_fachada_url" value="${casa.foto_fachada_url || ''}"></label><label>Foto complementar<input type="file" accept="image/*" capture="environment" data-admin-image-upload="casa_detalhe" data-admin-image-target="[data-casa='foto_detalhe_url']" ${disabled}><input type="hidden" data-casa="foto_detalhe_url" value="${casa.foto_detalhe_url || ''}"></label></div>
+      <div class="admin-grid"><label>Núcleo<input data-nucleo="nome_nucleo" value="${dados.nucleo.nome_nucleo || ''}" ${disabled}></label><label>Renda<input data-nucleo="renda_familiar_total" type="number" min="0" value="${dados.nucleo.renda_familiar_total ?? ''}" ${disabled}></label><label>Observação<textarea data-nucleo="observacao" ${disabled}>${dados.nucleo.observacao || ''}</textarea></label><label>Logradouro<input data-casa="logradouro" value="${casa.logradouro || ''}" ${disabled}></label><label>Número<input data-casa="numero" value="${casa.numero || ''}" ${disabled}></label><label>Bairro<input data-casa="bairro" value="${casa.bairro || ''}" ${disabled}></label><label>CEP<input data-casa="cep" value="${casa.cep || ''}" ${disabled}></label>${imageField('Foto da fachada', casa.foto_fachada_url, 'casa_fachada', "[data-casa='foto_fachada_url']", 'data-casa="foto_fachada_url"', 'Foto da fachada')}${imageField('Foto complementar', casa.foto_detalhe_url, 'casa_detalhe', "[data-casa='foto_detalhe_url']", 'data-casa="foto_detalhe_url"', 'Foto complementar da casa')}</div>
       <h3>Membros e vulnerabilidades</h3>${vulnerabilidades}<h3>Pets</h3><div data-pets-admin>${pets}</div>${somenteLeitura ? '' : '<button type="button" class="btn btn--ghost" data-adicionar-pet>Adicionar pet</button> <button class="btn btn--blue" data-salvar-familia>Salvar alterações</button>'}`;
     document.querySelector('.page-content').prepend(painel);
     painel.querySelector('[data-fechar-painel]').addEventListener('click', () => painel.remove());
@@ -160,7 +169,7 @@
       const card = document.createElement('div');
       card.className = 'admin-pet';
       card.dataset.petId = 'novo';
-      card.innerHTML = `<input data-pet-campo="tipo" placeholder="Tipo"><input data-pet-campo="porte" placeholder="Porte"><input data-pet-campo="quantidade" type="number" min="1" placeholder="Qtd."><label>Imagem <input type="file" accept="image/*" capture="environment" data-admin-image-upload="pet" data-admin-image-target="[data-pet-campo='imagem']"><input type="hidden" data-pet-campo="imagem"></label><button type="button" class="btn-textlink" data-remover-pet>Remover</button>`;
+      card.innerHTML = `<input data-pet-campo="tipo" placeholder="Tipo"><input data-pet-campo="porte" placeholder="Porte"><input data-pet-campo="quantidade" type="number" min="1" placeholder="Qtd.">${imageField('Imagem', '', 'pet', "[data-pet-campo='imagem']", 'data-pet-campo="imagem"', 'Imagem do pet')}<button type="button" class="btn-textlink" data-remover-pet>Remover</button>`;
       painel.querySelector('[data-pets-admin]').appendChild(card);
       card.querySelector('[data-remover-pet]').addEventListener('click', () => card.remove());
       bindPainelUploads(card);
@@ -192,6 +201,16 @@
           showToast('Enviando imagem...', 'info');
           const result = await apiUploadImage(file, input.dataset.adminImageUpload);
           if (target) target.value = result.url;
+          const photoField = input.closest('.admin-photo-field');
+          const preview = photoField?.querySelector('.admin-photo-preview');
+          if (preview) {
+            preview.href = result.url;
+            const image = preview.querySelector('img');
+            if (image) image.src = result.url;
+          } else if (photoField) {
+            photoField.querySelector('.admin-photo-empty')?.remove();
+            photoField.insertAdjacentHTML('afterbegin', `<a class="admin-photo-preview" href="${result.url}" target="_blank" rel="noopener"><img src="${result.url}" alt="Imagem enviada" loading="lazy"></a>`);
+          }
           showToast('Imagem enviada.', 'success');
         } catch (err) {
           input.value = '';

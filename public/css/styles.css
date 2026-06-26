@@ -869,6 +869,40 @@ body.theme-dark .m-map__pin .dot {
   width: auto !important;
 }
 
+.admin-photo-field {
+  min-width: 0;
+}
+
+.admin-photo-preview {
+  display: block;
+  width: 100%;
+  max-width: 260px;
+  aspect-ratio: 4 / 3;
+  border: 1px solid #d8dee6;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #f8fafc;
+}
+
+.admin-photo-preview img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+}
+
+.admin-photo-empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 92px;
+  border: 1px dashed #cbd5e1;
+  border-radius: 8px;
+  color: #64748b;
+  background: #f8fafc;
+  font-weight: 500;
+}
+
 .admin-pet {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) 110px auto;

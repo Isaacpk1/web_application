@@ -85,6 +85,33 @@
     }
     .m-btn-gps:hover { background: #1a2840; }
     .m-btn-gps:disabled { opacity: .6; cursor: not-allowed; }
+    .m-gps-block {
+      width: 100%;
+      max-width: 520px;
+      margin: 0 auto 18px;
+      text-align: center;
+    }
+    .m-gps-block .m-map {
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .m-gps-block .m-badge-ok.show {
+      display: inline-flex;
+      justify-content: center;
+      max-width: 100%;
+      margin: 0 auto 12px;
+    }
+    .m-gps-block .m-btn-gps {
+      max-width: 360px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .m-gps-separator {
+      text-align: center;
+      font-size: 12px;
+      color: #9CA3AF;
+      margin: 0 0 14px;
+    }
 
     /* ── Revisão cards ── */
     .m-review-card { background: #F9FAFB; border-radius: 10px; padding: 14px 16px; margin-bottom: 14px; }
@@ -225,15 +252,17 @@
         <span class="m-field__error">Selecione o setor de risco.</span>
       </div>
 
-      <div class="m-map is-empty" data-map>
-        <div class="m-map__pin">📍</div>
+      <div class="m-gps-block">
+        <div class="m-map is-empty" data-map>
+          <div class="m-map__pin">📍</div>
+        </div>
+        <div class="m-badge-ok" data-gps-badge>✓ GPS capturado com precisão</div>
+        <button type="button" class="m-btn-gps" data-gps-capture>
+          <span>📡</span><span class="label">Capturar GPS automaticamente</span>
+        </button>
       </div>
-      <div class="m-badge-ok" data-gps-badge>✓ GPS capturado com precisão</div>
-      <button type="button" class="m-btn-gps" data-gps-capture>
-        <span>📡</span><span class="label">Capturar GPS automaticamente</span>
-      </button>
 
-      <p style="text-align:center;font-size:12px;color:#9CA3AF;margin:0 0 14px">— ou informe as coordenadas manualmente —</p>
+      <p class="m-gps-separator">— ou informe as coordenadas manualmente —</p>
 
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
         <div class="m-field" data-field data-required>
