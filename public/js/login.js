@@ -1,12 +1,10 @@
 function destinoPosLogin(usuario) {
-  return usuario?.role === 'agente' ? '/agente/cadastro' : '/admin/analise-dados';
+  const role = String(usuario?.role || '').toLowerCase();
+  return role === 'agente' ? '/agente/cadastro' : '/admin/analise-dados';
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-  if (Auth.getToken()) {
-    window.location.href = destinoPosLogin(Auth.getUser());
-    return;
-  }
+  Auth.clear();
 
   const form = document.getElementById('loginForm');
   const emailInput = document.getElementById('email');
@@ -50,6 +48,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     btnEntrar.disabled = true;
     if (btnLabel) btnLabel.textContent = 'Entrando...';
+    Auth.clear();
 
     try {
       const res = await fetch(`${API_BASE}/auth/login`, {
