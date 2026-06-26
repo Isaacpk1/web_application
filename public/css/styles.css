@@ -748,7 +748,7 @@ body.theme-dark .m-map__pin .dot {
 .search-field { position: relative; }
 .search-field input { padding-left: 38px; }
 .search-field .search-ico {
-  position: absolute; left: 12px; top: 50%; transform: translateY(-50%);
+  position: absolute; left: 12px; bottom: 12px;
   width: 16px; height: 16px; color: #94a3b8; pointer-events: none;
 }
 .btn--sias { background: var(--color-sias); color: #fff; }
