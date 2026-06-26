@@ -10,7 +10,7 @@
     /* ── mapa container abaixo da navbar padrão ── */
     .mapa-container {
       position: fixed;
-      top: 64px;
+      top: 0;
       left: 240px; right: 0; bottom: 0;
     }
     #leaflet-map { width: 100%; height: 100%; }
@@ -19,7 +19,7 @@
     }
     @media (max-width: 640px) {
       html, body { overflow: auto; }
-      .mapa-container { left: 0; top: 64px; }
+      .mapa-container { left: 0; top: 0; }
     }
 
     /* ── painel de filtros ── */
@@ -87,8 +87,6 @@
   <div class="layout">
     <%- include('partials/sidebar', { active: 'mapa' }) %>
     <div class="main">
-      <%- include('partials/topbar', { pageTitle: 'Mapa de Risco' }) %>
-
   <!-- Mapa Leaflet -->
   <div class="mapa-container">
     <div id="leaflet-map"></div>

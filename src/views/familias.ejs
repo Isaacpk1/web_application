@@ -5,10 +5,6 @@
 <div class="layout">
   <%- include('partials/sidebar', { active: 'familias' }) %>
   <div class="main">
-    <%- include('partials/topbar', {
-      pageTitle: 'Famílias',
-      actionBtn: { href: '/agente/cadastro', label: '+ Novo Cadastro' }
-    }) %>
     <div class="page-content">
 
       <!-- Cabeçalho da seção -->
@@ -17,10 +13,16 @@
           <h2 style="font-size:22px;font-weight:700;color:#2c3e50;margin-bottom:4px;">Cadastro de Famílias</h2>
           <p style="font-size:13px;color:#6b7280;" id="familias-subtitle">Carregando...</p>
         </div>
-        <button class="btn btn--export" id="btn-export">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-          Exportar dados
-        </button>
+        <div class="export-actions">
+          <button class="btn btn--export" id="btn-export-excel">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            Excel
+          </button>
+          <button class="btn btn--export" id="btn-export-pdf">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="14" y2="17"/></svg>
+            PDF
+          </button>
+        </div>
       </div>
 
       <!-- Layout: sidebar de filtros (esquerda) + tabela (direita) -->

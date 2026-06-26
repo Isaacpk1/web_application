@@ -768,6 +768,12 @@ body.theme-dark .m-map__pin .dot {
   background: var(--color-sias); color: #fff; gap: 8px;
 }
 .btn--export:hover { background: var(--color-sias-hover); }
+.export-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
 
 /* Painel de visualizacao/edicao de familias */
 #familia-painel {

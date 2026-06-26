@@ -7,13 +7,14 @@
   <div class="layout">
     <%- include('partials/sidebar', { active: 'analise-dados' }) %>
     <div class="main">
-      <%- include('partials/topbar', {
-        pageTitle: 'Análise de Dados',
-        actionBtn: { href: '/agente/cadastro', label: '+ Nova família' }
-      }) %>
-
       <main class="page-content">
-    <p class="page-subtitle">Visão geral dos núcleos familiares, risco e vulnerabilidade.</p>
+        <div class="content-head" style="margin-bottom:24px;">
+          <div>
+            <h2 style="font-size:22px;font-weight:700;color:#2c3e50;margin-bottom:4px;">Análise de Dados</h2>
+            <p style="font-size:13px;color:#6b7280;">Visão geral dos núcleos familiares, risco e vulnerabilidade.</p>
+          </div>
+          <a href="/agente/cadastro" class="topbar__action-btn">+ Nova família</a>
+        </div>
 
     <!-- KPIs -->
     <section class="kpi-grid" aria-label="Indicadores">

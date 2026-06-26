@@ -281,20 +281,53 @@
 
   load();
 
-  document.getElementById('btn-export')?.addEventListener('click', () => {
+  function getExportData() {
     if (ultimosResultados.length === 0) {
       showToast('Nao ha registros para exportar nesta pagina.', 'info');
-      return;
+      return null;
     }
     const colunas = ['Familia', 'Responsavel', 'Setor', 'Logradouro', 'Numero', 'Bairro', 'Nivel de risco', 'Membros'];
     const linhas = ultimosResultados.map((f) => [f.nome_familia, f.nome_responsavel, f.codigo_setor, f.logradouro, f.numero, f.bairro, f.nivel_risco, f.qtd_membros]);
-    const csv = [colunas, ...linhas].map((linha) => linha.map((v) => `"${String(v ?? '').replace(/"/g, '""')}"`).join(';')).join('\n');
-    const url = URL.createObjectURL(new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8' }));
+    return { colunas, linhas };
+  }
+
+  function baixarArquivo(nome, conteudo, tipo) {
+    const url = URL.createObjectURL(new Blob([conteudo], { type: tipo }));
     const link = document.createElement('a');
     link.href = url;
-    link.download = 'familias.csv';
+    link.download = nome;
     link.click();
     URL.revokeObjectURL(url);
+  }
+
+  function escapeHtml(value) {
+    return String(value ?? '').replace(/[&<>"']/g, (char) => ({
+      '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;',
+    }[char]));
+  }
+
+  document.getElementById('btn-export-excel')?.addEventListener('click', () => {
+    const dados = getExportData();
+    if (!dados) return;
+
+    const tabela = `<table><thead><tr>${dados.colunas.map((coluna) => `<th>${escapeHtml(coluna)}</th>`).join('')}</tr></thead><tbody>${dados.linhas.map((linha) => `<tr>${linha.map((valor) => `<td>${escapeHtml(valor)}</td>`).join('')}</tr>`).join('')}</tbody></table>`;
+    const html = `<!DOCTYPE html><html><head><meta charset="UTF-8"></head><body>${tabela}</body></html>`;
+    baixarArquivo('familias.xls', html, 'application/vnd.ms-excel;charset=utf-8');
+  });
+
+  document.getElementById('btn-export-pdf')?.addEventListener('click', () => {
+    const dados = getExportData();
+    if (!dados) return;
+
+    const linhas = dados.linhas.map((linha) => `<tr>${linha.map((valor) => `<td>${escapeHtml(valor)}</td>`).join('')}</tr>`).join('');
+    const colunas = dados.colunas.map((coluna) => `<th>${escapeHtml(coluna)}</th>`).join('');
+    const janela = window.open('', '_blank');
+    if (!janela) {
+      showToast('Permita pop-ups para exportar o PDF.', 'error');
+      return;
+    }
+    janela.document.write(`<!DOCTYPE html><html><head><title>Familias</title><style>body{font-family:Arial,sans-serif;margin:24px;color:#111827}h1{font-size:20px;margin:0 0 16px}table{width:100%;border-collapse:collapse;font-size:11px}th,td{border:1px solid #d1d5db;padding:6px;text-align:left}th{background:#f3f4f6}@media print{@page{size:landscape;margin:12mm}}</style></head><body><h1>Cadastro de Familias</h1><table><thead><tr>${colunas}</tr></thead><tbody>${linhas}</tbody></table><script>window.onload=function(){window.print();};<\/script></body></html>`);
+    janela.document.close();
   });
 
   const familiaId = new URLSearchParams(window.location.search).get('id');
