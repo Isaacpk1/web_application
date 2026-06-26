@@ -5,6 +5,15 @@ import { formatError, formatSuccess } from '../views/responseFormatter';
 
 const router = Router();
 
+function getUserRole(user: { email?: string | null; user_metadata?: Record<string, unknown>; app_metadata?: Record<string, unknown> }) {
+  const email = user.email?.trim().toLowerCase();
+  const adminEmail = process.env.ADMIN_EMAIL?.trim().toLowerCase();
+
+  if (adminEmail && email === adminEmail) return 'admin';
+
+  return String(user.user_metadata?.role ?? user.app_metadata?.role ?? 'admin').toLowerCase();
+}
+
 /**
  * @swagger
  * /auth/login:
@@ -54,7 +63,7 @@ router.post('/login', async (req: Request, res: Response): Promise<void> => {
         usuario: {
           id: data.user.id,
           email: data.user.email,
-          role: data.user.user_metadata?.role ?? 'admin',
+          role: getUserRole(data.user),
         },
       },
       'Login realizado com sucesso',
