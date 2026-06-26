@@ -4,10 +4,15 @@
   <%- include('partials/head', { title: 'GeoRisco — Análise de Dados' }) %>
 </head>
 <body>
-  <%- include('partials/navbar', { active: 'analise-dados' }) %>
+  <div class="layout">
+    <%- include('partials/sidebar', { active: 'analise-dados' }) %>
+    <div class="main">
+      <%- include('partials/topbar', {
+        pageTitle: 'Análise de Dados',
+        actionBtn: { href: '/agente/cadastro', label: '+ Nova família' }
+      }) %>
 
-  <main class="page">
-    <h1 class="page-title">Análise de Dados</h1>
+      <main class="page-content">
     <p class="page-subtitle">Visão geral dos núcleos familiares, risco e vulnerabilidade.</p>
 
     <!-- KPIs -->
@@ -84,7 +89,9 @@
         <div class="pagination" id="paginacao"></div>
       </div>
     </section>
-  </main>
+      </main>
+    </div>
+  </div>
 
   <script src="/js/api.js?v=20260626-1"></script>
   <script src="/js/analise-dados.js?v=20260626-1"></script>

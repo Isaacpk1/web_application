@@ -591,7 +591,7 @@
     if (currentStep > 1) { currentStep--; showStep(currentStep); }
   });
 
-  root.querySelector('[data-back]').addEventListener('click', () => {
+  root.querySelector('[data-back]')?.addEventListener('click', () => {
     if (currentStep > 1) { currentStep--; showStep(currentStep); }
     else window.history.back();
   });
@@ -666,7 +666,7 @@
         }),
       });
       toastOk.classList.add('show');
-      savePill.classList.add('show');
+      savePill?.classList.add('show');
       const protocolo = root.querySelector('[data-success-proto]');
       const descricao = root.querySelector('[data-success-desc]');
       if (protocolo) protocolo.textContent = `Protocolo: NF-${String(resultado.nucleo_familiar_id).padStart(6, '0')}`;
