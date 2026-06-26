@@ -1212,6 +1212,11 @@ select.m-field__control {
   margin-right: auto !important;
 }
 
+.m-step[data-step="1"] .m-gps-block,
+.m-step[data-step="1"] > .m-map {
+  margin-top: 32px !important;
+}
+
 .m-step[data-step="1"] .m-gps-block .m-map,
 .m-step[data-step="1"] > .m-map {
   width: min(100%, 760px) !important;
@@ -1233,6 +1238,10 @@ select.m-field__control {
 .m-step[data-step="1"] .m-gps-block .m-btn-gps,
 .m-step[data-step="1"] > .m-btn-gps {
   width: min(100%, 360px) !important;
+}
+
+.m-step[data-step="1"] .m-gps-separator {
+  margin-bottom: 32px !important;
 }
 
 .m-badge-ok {
