@@ -129,6 +129,19 @@ describe('CadastroBuscaRepository', () => {
     expect(pg2.resultados).toHaveLength(1);
   });
 
+  it('calcula stats acumuladas antes da paginacao', async () => {
+    const nucleos = [1, 2, 3].map((i) => ({ ...nucleo, id: i, nome_nucleo: `Familia ${i}` }));
+    const casas = [1, 2, 3].map((i) => ({ ...casa, id: i }));
+    const setores = [setor];
+    const individuos = [1, 2, 3].map((i) => ({ ...chefe, id: i + 10, id_nucleo_familiar: i }));
+
+    mockSupabase(nucleos, casas, setores, individuos);
+    const pagina = await new CadastroBuscaRepository().buscar({ page: 1, limit: 1 });
+
+    expect(pagina.resultados).toHaveLength(1);
+    expect(pagina.stats).toEqual({ prioridade_alta: 3, cadastros_completos: 3 });
+  });
+
   it('marca cadastro_completo como false quando sem chefe', async () => {
     const semChefe = { ...nucleo, id_chefe_familia: null };
     mockSupabase([semChefe], [casa], [setor], [chefe]);

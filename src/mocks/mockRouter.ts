@@ -101,7 +101,13 @@ dataRouter.get('/cadastros/busca', (req: Request, res: Response): void => {
 
   res.status(200).json(
     formatSuccess(
-      { resultados, total: result.total, page: result.page, limit: result.limit },
+      {
+        resultados,
+        total: result.total,
+        page: result.page,
+        limit: result.limit,
+        stats: result.stats,
+      },
       'Busca realizada com sucesso (mock)',
     ),
   );

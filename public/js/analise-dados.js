@@ -55,17 +55,18 @@ function initAnaliseDados() {
   function render(data) {
     const resultados = (data && data.resultados) || [];
     const total = (data && data.total) || 0;
+    const stats = (data && data.stats) || {};
     const page = (data && data.page) || state.page;
     const limit = (data && data.limit) || state.limit;
 
     // KPIs
     document.getElementById('kpiTotal').textContent = total.toLocaleString('pt-BR');
-    document.getElementById('kpiAlta').textContent = resultados.filter(
-      (r) => (r.prioridade_vulnerabilidade || '').toUpperCase() === 'ALTA',
-    ).length;
-    document.getElementById('kpiCompletos').textContent = resultados.filter(
-      (r) => r.cadastro_completo,
-    ).length;
+    document.getElementById('kpiAlta').textContent = Number(
+      stats.prioridade_alta ?? resultados.filter((r) => (r.prioridade_vulnerabilidade || '').toUpperCase() === 'ALTA').length,
+    ).toLocaleString('pt-BR');
+    document.getElementById('kpiCompletos').textContent = Number(
+      stats.cadastros_completos ?? resultados.filter((r) => r.cadastro_completo).length,
+    ).toLocaleString('pt-BR');
 
     if (resultados.length === 0) {
       tbody.innerHTML = '<tr><td colspan="7" class="empty-state">Nenhuma família encontrada.</td></tr>';

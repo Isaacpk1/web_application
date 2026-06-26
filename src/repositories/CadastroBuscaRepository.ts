@@ -31,6 +31,10 @@ export interface CadastroBuscaPagina {
   total: number;
   page: number;
   limit: number;
+  stats: {
+    prioridade_alta: number;
+    cadastros_completos: number;
+  };
   resultados: CadastroBuscaResultado[];
 }
 
@@ -88,11 +92,15 @@ export class CadastroBuscaRepository {
     resultados = this.aplicarFiltros(resultados, filtro);
 
     const total = resultados.length;
+    const stats = {
+      prioridade_alta: resultados.filter((r) => r.prioridade_vulnerabilidade === 'ALTA').length,
+      cadastros_completos: resultados.filter((r) => r.cadastro_completo).length,
+    };
     const page = Math.max(1, filtro.page ?? 1);
     const limit = Math.max(1, filtro.limit ?? 5);
     const inicio = (page - 1) * limit;
 
-    return { total, page, limit, resultados: resultados.slice(inicio, inicio + limit) };
+    return { total, page, limit, stats, resultados: resultados.slice(inicio, inicio + limit) };
   }
 
   private toResultado(

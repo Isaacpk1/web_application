@@ -209,6 +209,10 @@ export const mockStore = {
     const total = list.length;
     const start = (page - 1) * limit;
     const resultados = list.slice(start, start + limit).map(toResultado);
+    const stats = {
+      prioridade_alta: list.filter((f) => f.nivel_risco === 'MUITO_ALTO' || f.nivel_risco === 'ALTO').length,
+      cadastros_completos: list.filter((f) => f.cadastro_completo).length,
+    };
 
     const kpis = {
       total_familias: families.length,
@@ -218,7 +222,7 @@ export const mockStore = {
       cadastros_incompletos: families.filter((f) => !f.cadastro_completo).length,
     };
 
-    return { total, page, limit, kpis, resultados };
+    return { total, page, limit, kpis, stats, resultados };
   },
 
   /** Todos os pontos com coordenadas (para o mapa de risco). */
