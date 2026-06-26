@@ -281,13 +281,20 @@
 
   load();
 
-  function getExportData() {
-    if (ultimosResultados.length === 0) {
+  async function getExportData() {
+    const params = new URLSearchParams({ page: 1, limit: 10000 });
+    if (searchInput.value.trim()) params.set('nome', searchInput.value.trim());
+    if (filterRisco.value) params.set('nivel_risco', filterRisco.value);
+    if (filterBairro.value.trim()) params.set('bairro', filterBairro.value.trim());
+
+    const data = await apiFetch(`/cadastros/busca?${params}`);
+    const resultados = data.resultados || [];
+    if (resultados.length === 0) {
       showToast('Nao ha registros para exportar nesta pagina.', 'info');
       return null;
     }
     const colunas = ['Familia', 'Responsavel', 'Setor', 'Logradouro', 'Numero', 'Bairro', 'Nivel de risco', 'Membros'];
-    const linhas = ultimosResultados.map((f) => [f.nome_familia, f.nome_responsavel, f.codigo_setor, f.logradouro, f.numero, f.bairro, f.nivel_risco, f.qtd_membros]);
+    const linhas = resultados.map((f) => [f.nome_familia, f.nome_responsavel, f.codigo_setor, f.logradouro, f.numero, f.bairro, f.nivel_risco, f.qtd_membros]);
     return { colunas, linhas };
   }
 
@@ -306,8 +313,8 @@
     }[char]));
   }
 
-  document.getElementById('btn-export-excel')?.addEventListener('click', () => {
-    const dados = getExportData();
+  document.getElementById('btn-export-excel')?.addEventListener('click', async () => {
+    const dados = await getExportData();
     if (!dados) return;
 
     const tabela = `<table><thead><tr>${dados.colunas.map((coluna) => `<th>${escapeHtml(coluna)}</th>`).join('')}</tr></thead><tbody>${dados.linhas.map((linha) => `<tr>${linha.map((valor) => `<td>${escapeHtml(valor)}</td>`).join('')}</tr>`).join('')}</tbody></table>`;
@@ -315,8 +322,8 @@
     baixarArquivo('familias.xls', html, 'application/vnd.ms-excel;charset=utf-8');
   });
 
-  document.getElementById('btn-export-pdf')?.addEventListener('click', () => {
-    const dados = getExportData();
+  document.getElementById('btn-export-pdf')?.addEventListener('click', async () => {
+    const dados = await getExportData();
     if (!dados) return;
 
     const linhas = dados.linhas.map((linha) => `<tr>${linha.map((valor) => `<td>${escapeHtml(valor)}</td>`).join('')}</tr>`).join('');
