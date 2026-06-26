@@ -29,4 +29,5 @@ export interface Individuo {
   status_vital: StatusVital;
   data_obito: string | null;
   semanas_gestacao: number | null;
+  foto_url: string | null;
 }

@@ -3,6 +3,22 @@ import request from 'supertest';
 
 dotenv.config();
 
+const mockCadastrador = {
+  id: 5,
+  nome: 'AGENTE SILVA',
+  documento: '123.456-7',
+};
+
+jest.mock('../../repositories/CadastradorRepository', () => ({
+  CadastradorRepository: jest.fn().mockImplementation(() => ({
+    findAll: jest.fn().mockResolvedValue([mockCadastrador]),
+    findById: jest.fn((id: number) => Promise.resolve(id === 99999 ? null : { ...mockCadastrador, id })),
+    create: jest.fn((payload) => Promise.resolve({ ...mockCadastrador, ...payload, id: 5 })),
+    update: jest.fn((id, payload) => Promise.resolve({ ...mockCadastrador, ...payload, id })),
+    delete: jest.fn().mockResolvedValue(undefined),
+  })),
+}));
+
 /**
  * Suite de testes HTTP para endpoints de Cadastradores.
  *

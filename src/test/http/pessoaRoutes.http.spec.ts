@@ -3,6 +3,56 @@ import request from 'supertest';
 
 dotenv.config();
 
+const mockIndividuo = {
+  id: 2,
+  id_nucleo_familiar: 1,
+  nome_completo: 'JOAO SILVA',
+  apelido: null,
+  nome_social: null,
+  data_nascimento: '1990-05-10',
+  genero: 'Masculino',
+  cor_raca: null,
+  uf: null,
+  estado_civil: null,
+  profissao: null,
+  nome_mae: null,
+  nome_pai: null,
+  grau_parentesco: null,
+  escolaridade: 'ENSINO MEDIO',
+  situacao_ocupacional: 'PEDREIRO',
+  cpf: '52998224725',
+  doc_estrangeiro: null,
+  rg: null,
+  nis: null,
+  telefone: null,
+  email: null,
+  status_vital: 'Vivo',
+  data_obito: null,
+  semanas_gestacao: null,
+};
+
+jest.mock('../../repositories/NucleoFamiliarRepository', () => ({
+  NucleoFamiliarRepository: jest.fn().mockImplementation(() => ({
+    findAll: jest.fn().mockResolvedValue([{ id: 1, nome_nucleo: 'FAMILIA SILVA' }]),
+    findById: jest.fn((id: number) => Promise.resolve(id === 99999 ? null : { id, nome_nucleo: 'FAMILIA SILVA' })),
+    create: jest.fn().mockResolvedValue({ id: 1, nome_nucleo: 'FAMILIA SILVA' }),
+    update: jest.fn().mockResolvedValue({ id: 1, nome_nucleo: 'FAMILIA SILVA' }),
+    delete: jest.fn().mockResolvedValue(undefined),
+  })),
+}));
+
+jest.mock('../../repositories/IndividuoRepository', () => ({
+  IndividuoRepository: jest.fn().mockImplementation(() => ({
+    findAll: jest.fn().mockResolvedValue([mockIndividuo]),
+    findById: jest.fn((id: number) => Promise.resolve(id === 99999 ? null : { ...mockIndividuo, id })),
+    findByNucleoFamiliarId: jest.fn().mockResolvedValue([mockIndividuo]),
+    existsByCpfOrNis: jest.fn().mockResolvedValue(false),
+    create: jest.fn((payload) => Promise.resolve({ ...mockIndividuo, ...payload, id: 2 })),
+    update: jest.fn((id, payload) => Promise.resolve({ ...mockIndividuo, ...payload, id })),
+    delete: jest.fn().mockResolvedValue(undefined),
+  })),
+}));
+
 /**
  * Suite de testes HTTP para endpoints de Indivíduos (RF001, RF003, RF004).
  *

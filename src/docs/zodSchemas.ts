@@ -32,6 +32,8 @@ const casa = z.object({
   uso_imovel: z.enum(['Residencial', 'Comercial', 'Misto']),
   status_imovel: z.enum(['Sadio', 'Interditado', 'Destruido']),
   data_interdicao: nullableString,
+  foto_fachada_url: nullableString,
+  foto_detalhe_url: nullableString,
 }).strip();
 const nucleoFamiliar = z.object({
   id,
@@ -71,6 +73,7 @@ const individuo = z.object({
   status_vital: statusVital,
   data_obito: nullableString,
   semanas_gestacao: z.number().int().nonnegative().nullable(),
+  foto_url: nullableString,
 }).strip();
 const vulnerabilidade = z.object({ id, tipo_vulnerabilidade: z.string() }).strip();
 const pet = z.object({
@@ -84,7 +87,10 @@ const pet = z.object({
 
 const createCadastrador = cadastrador.omit({ id: true });
 const createSetor = setor.omit({ id: true, codigo_setor: true }).partial({ grau_risco: true });
-const createCasa = casa.omit({ id: true }).partial({ logradouro: true, numero: true, bairro: true, observacao: true, cep: true, status_imovel: true, data_interdicao: true });
+const createCasa = casa.omit({ id: true }).partial({
+  logradouro: true, numero: true, bairro: true, observacao: true, cep: true,
+  status_imovel: true, data_interdicao: true, foto_fachada_url: true, foto_detalhe_url: true,
+});
 const createNucleoFamiliar = nucleoFamiliar.omit({ id: true }).partial({
   id_chefe_familia: true, observacao: true, tempo_residencia_domicilio: true,
   tempo_residencia_area: true, tempo_residencia_municipio: true, renda_familiar_total: true,
@@ -92,7 +98,7 @@ const createNucleoFamiliar = nucleoFamiliar.omit({ id: true }).partial({
 const createIndividuo = individuo.omit({ id: true }).partial({
   apelido: true, nome_social: true, cor_raca: true, uf: true, estado_civil: true, profissao: true, nome_mae: true, nome_pai: true,
   grau_parentesco: true, escolaridade: true, situacao_ocupacional: true, cpf: true, doc_estrangeiro: true, rg: true,
-  nis: true, telefone: true, email: true, status_vital: true, data_obito: true, semanas_gestacao: true,
+  nis: true, telefone: true, email: true, status_vital: true, data_obito: true, semanas_gestacao: true, foto_url: true,
 });
 const createVulnerabilidade = vulnerabilidade.omit({ id: true });
 const createPet = pet.omit({ id: true }).partial({ tipo: true, porte: true, imagem: true, quantidade: true });

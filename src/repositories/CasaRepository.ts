@@ -35,6 +35,8 @@ export class CasaRepository {
         uso_imovel: payload.uso_imovel,
         status_imovel: payload.status_imovel ?? 'Sadio',
         data_interdicao: payload.data_interdicao ?? null,
+        foto_fachada_url: payload.foto_fachada_url ?? null,
+        foto_detalhe_url: payload.foto_detalhe_url ?? null,
       })
       .select('*')
       .single();
@@ -50,6 +52,7 @@ export class CasaRepository {
           'id_setor', 'coordenada_lat', 'coordenada_long', 'logradouro',
           'numero', 'observacao', 'bairro', 'cep',
           'tipo_construcao', 'uso_imovel', 'status_imovel', 'data_interdicao',
+          'foto_fachada_url', 'foto_detalhe_url',
         ]),
       )
       .eq('id', id)
@@ -79,6 +82,8 @@ export class CasaRepository {
       uso_imovel: row.uso_imovel as Casa['uso_imovel'],
       status_imovel: row.status_imovel as Casa['status_imovel'],
       data_interdicao: row.data_interdicao,
+      foto_fachada_url: row.foto_fachada_url,
+      foto_detalhe_url: row.foto_detalhe_url,
     };
   }
 }

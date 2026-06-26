@@ -4,7 +4,9 @@
   <a href="https://www.inteli.edu.br/"><img src="/assets/inteli.png" alt="Inteli - Instituto de Tecnologia e Liderança" border="0"></a>
 </p>
 
-Aplicação web de georreferenciamento para gestão de riscos e acolhimento emergencial da Defesa Civil de Santo André. Centraliza cadastro de famílias em áreas de risco, monitoramento de ocorrências e logística humanitária.
+O GeoRisco Santo André é uma aplicação web desenvolvida pelo grupo G&M do Inteli para apoiar a Defesa Civil de Santo André na gestão de famílias em áreas de risco. A solução centraliza o cadastro socioestrutural de núcleos familiares, casas, indivíduos, vulnerabilidades e animais de estimação, conectando dados coletados em campo a painéis de consulta, mapa georreferenciado e acompanhamento de completude cadastral. O sistema foi pensado para reduzir a dependência de fichas físicas e planilhas dispersas, permitindo que agentes registrem informações essenciais com mais padronização e que gestores consultem dados atualizados para priorizar atendimentos, planejar ações preventivas e melhorar a resposta em situações de emergência. A arquitetura usa Node.js, Express, TypeScript, EJS e Supabase, organizada em camadas de rotas, controllers, services, repositories, models e views. Para desenvolvimento local, o projeto oferece modo mock, permitindo executar a interface e validar fluxos principais mesmo sem conexão com uma base real do Supabase.
+
+**Grupo:** G&M
 
 ## Integrantes
 
@@ -24,6 +26,10 @@ Aplicação web de georreferenciamento para gestão de riscos e acolhimento emer
 **Instrutores:** [Bruna Mayer Costa](https://www.linkedin.com/in/bruna-mayer/) · [Claudio Fernando André](https://www.linkedin.com/in/profclaudioandre/) · [Crishna Irion](https://www.linkedin.com/in/crishna-irion-phd-7b5aa311/) · [Fabio Cassio Souza](https://www.linkedin.com/in/fabiocassiosouza/) · [Henrique Mohallem Paiva](https://www.linkedin.com/in/henrique-mohallem-paiva-6854b460/)
 
 ---
+
+## Link de Demonstração
+
+Não se aplica nesta versão: vídeo demonstrativo ainda pendente de publicação.
 
 ## Pré-requisitos
 
@@ -102,19 +108,30 @@ Supabase; o modo mock permanece isolado para desenvolvimento e testes.
 
 ```
 g04/
-├── src/
-│   ├── routes/        # Roteamento HTTP (todos os endpoints em /api/v1/)
-│   ├── controllers/   # Parse da requisição, chamada ao service, formatação da resposta
-│   ├── services/      # Regras de negócio e validações
-│   ├── repositories/  # Queries no Supabase
-│   ├── models/        # Tipos de domínio (domain/) e DTOs (dto/)
-│   ├── helpers/       # Middlewares, incluindo autenticação JWT
-│   ├── mocks/         # Rotas e dados mock para desenvolvimento sem banco
-│   ├── views/         # Templates EJS (login, dashboard, famílias, mapa, etc.)
-│   └── test/          # Testes unitários e de integração
-├── public/            # Assets estáticos e scripts JS do frontend
+├── api/               # Entrada serverless para deploy na Vercel
+├── assets/            # Imagens, ícones, prints, wireframes e materiais do WAD
+├── dist/              # Build TypeScript gerada por npm run build
 ├── documentos/
-│   └── wad.md         # Web Application Document completo
+│   ├── wad.md         # Web Application Document completo
+│   └── outros/        # Documentos complementares ao WAD
+├── public/
+│   ├── css/           # Estilos globais do frontend
+│   └── js/            # Scripts das telas EJS
+├── src/
+│   ├── config/        # Configuração e validação de variáveis de ambiente
+│   ├── controllers/   # Camada HTTP: parse da requisição e resposta
+│   ├── database/      # Cliente Supabase, schema tipado e migrations SQL
+│   ├── docs/          # OpenAPI e schemas de documentação
+│   ├── helpers/       # Validadores, sanitização e tratamento de erros
+│   ├── middlewares/   # CORS e autenticação JWT
+│   ├── mocks/         # Rotas e dados mock para desenvolvimento sem banco
+│   ├── models/        # Tipos de domínio e DTOs
+│   ├── repositories/  # Conexão com banco e queries Supabase
+│   ├── routes/        # Roteamento HTTP versionado em /api/v1
+│   ├── scripts/       # Scripts utilitários
+│   ├── services/      # Regras de negócio e validações
+│   ├── test/          # Testes unitários, HTTP e factories
+│   └── views/         # Templates EJS da camada de apresentação
 └── .env               # Variáveis de ambiente (não versionado)
 ```
 

@@ -3,6 +3,49 @@ import request from 'supertest';
 
 dotenv.config();
 
+const mockPet = {
+  id: 7,
+  id_nucleo_familiar: 1,
+  tipo: 'Cachorro',
+  porte: 'Medio',
+  quantidade: 1,
+  imagem: null,
+};
+
+const mockNucleoFamiliar = {
+  id: 1,
+  nome_nucleo: 'FAMILIA SILVA',
+  id_casa: 3,
+  id_cadastrador: 5,
+  id_chefe_familia: null,
+  observacao: null,
+  tempo_residencia_domicilio: null,
+  tempo_residencia_area: null,
+  tempo_residencia_municipio: null,
+  renda_familiar_total: null,
+};
+
+jest.mock('../../repositories/PetRepository', () => ({
+  PetRepository: jest.fn().mockImplementation(() => ({
+    findAll: jest.fn().mockResolvedValue([mockPet]),
+    findById: jest.fn((id: number) => Promise.resolve(id === 99999 ? null : { ...mockPet, id })),
+    findByNucleoFamiliarId: jest.fn().mockResolvedValue([mockPet]),
+    create: jest.fn((payload) => Promise.resolve({ ...mockPet, ...payload, id: 7 })),
+    update: jest.fn((id, payload) => Promise.resolve({ ...mockPet, ...payload, id })),
+    delete: jest.fn().mockResolvedValue(undefined),
+  })),
+}));
+
+jest.mock('../../repositories/NucleoFamiliarRepository', () => ({
+  NucleoFamiliarRepository: jest.fn().mockImplementation(() => ({
+    findAll: jest.fn().mockResolvedValue([mockNucleoFamiliar]),
+    findById: jest.fn((id: number) => Promise.resolve(id === 99999 ? null : { ...mockNucleoFamiliar, id })),
+    create: jest.fn((payload) => Promise.resolve({ ...mockNucleoFamiliar, ...payload, id: 1 })),
+    update: jest.fn((id, payload) => Promise.resolve({ ...mockNucleoFamiliar, ...payload, id })),
+    delete: jest.fn().mockResolvedValue(undefined),
+  })),
+}));
+
 /**
  * Suite de testes HTTP para endpoints de Pets.
  *

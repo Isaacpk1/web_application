@@ -4,13 +4,15 @@
 # WAD - Web Application Document - Módulo 2 - Inteli
 
 > **Nota sobre a implementação atual:** o contrato vigente do banco está em
-> `documentos/outros/mapeamento-supabase-models.md` e
-> `documentos/migrations/001_completar_requisitos_funcionais.sql`, complementado por
-> `documentos/migrations/002_exigir_documento_cadastrador.sql`.
+> `documentos/outros/mapeamento-supabase-models.md` e pelas migrations versionadas em
+> `src/database/migrations/`, iniciando por `001_migration.sql` e complementadas
+> pelas migrations incrementais `002_*`, `003_*`, `004_*` e `005_*`.
 >
 > **Como interpretar este documento:** o estado de cada requisito indica se ele está implementado ou planejado.
 
 ## Nome do Grupo
+
+G&M - GeoRisco Santo André
 
 #### Nomes dos integrantes do grupo
 
@@ -1449,8 +1451,8 @@ Todas as tabelas utilizam `id INT NOT NULL` como chave primaria com auto-increme
 
 ### 3.6.3. Modelo Relacional e Modelo Físico (sprints 2 e 4)
 
-O contrato físico vigente é definido por `documentos/migrations/001_completar_requisitos_funcionais.sql` e,
-para atualização de bancos antigos, `documentos/migrations/002_exigir_documento_cadastrador.sql`. O backend
+O contrato físico vigente é definido por `src/database/migrations/001_migration.sql` e,
+para atualização de bancos antigos, pelas migrations incrementais em `src/database/migrations/`. O backend
 acessa essas tabelas pelos repositories e pelos tipos declarados em `src/database/SupabaseSchema.ts`.
 
 #### Modelo Relacional Vigente
@@ -1516,11 +1518,13 @@ As exclusões são físicas.
 
 | Arquivo | Uso correto |
 |---|---|
-| `001_completar_requisitos_funcionais.sql` | Criação do schema atual em banco vazio. Cria as sete tabelas, FKs, chaves, `CHECKs`, unicidade de CPF/NIS e campos binários de foto. |
-| `002_exigir_documento_cadastrador.sql` | Correção de banco antigo para tornar `cadastrador.documento` obrigatório e validar o formato. Não deve ser executada após uma instalação nova feita pela migration 001. |
+| `src/database/migrations/001_migration.sql` | Criação do schema base em banco vazio. Cria as tabelas principais, FKs, chaves, `CHECKs` e constraints iniciais. |
+| `src/database/migrations/002_cadastro_completo_up.sql` | Evolui a RPC de cadastro composto para criar casa, núcleo familiar, indivíduos, vulnerabilidades e pets em uma operação idempotente. |
+| `src/database/migrations/003_casa_endereco_unique_up.sql` | Ajusta unicidade de endereço da casa por setor, bairro, logradouro e número. |
+| `src/database/migrations/004_setor_api_view_up.sql` | Cria/atualiza visão de setor consumida pela API. |
+| `src/database/migrations/005_ensure_pet_table_up.sql` | Garante a existência da tabela de pets vinculada ao núcleo familiar. |
 
-Antes de executar a migration 002, todos os cadastradores existentes devem possuir documento válido no formato
-`123.456-7`. As migrations não usam `IF NOT EXISTS` e não são idempotentes.
+As migrations possuem arquivos `*_down.sql` correspondentes quando há reversão prevista. Execute primeiro em uma base Supabase de teste explicitamente escolhida e valide busca, mapa, completude e cadastro composto antes de promover ao ambiente principal.
 
 #### Constraints e Regras de Integridade Aplicadas
 
@@ -1941,7 +1945,7 @@ conforme medições reais e implementar os requisitos planejados restantes.
 | D01 | JWT não era enviado nas chamadas fetch entre páginas — API retornava 401 mesmo após login bem-sucedido | Cada página chamava `fetch()` diretamente sem incluir o header `Authorization` | Centralizado em `apiFetch()` no `api.js`: toda chamada injeta `Authorization: Bearer <token>` lido do `localStorage`; redirecionamento para `/login` automático no 401 | `public/js/api.js` |
 | D02 | Desenvolvimento impossibilitado sem credenciais do Supabase configuradas localmente | API dependia de Supabase real para autenticação e queries; equipe sem banco configurado travava o frontend | Implementado modo mock com `MOCK_AUTH=true`: `mockRouter.ts` monta `mockAuthRoutes` e `mockApiRoutes` antes do router real, simulando login e dados de teste sem conexão com banco | `src/mocks/mockRouter.ts` |
 | D03 | CPF e NIS com máscara (ex: `123.456.789-09`) eram rejeitados pela validação do backend com erro 422 | O `assertCpf()` esperava apenas dígitos; o frontend enviava o valor bruto do campo sem remover pontuação | Adicionado `sanitizeObject()` em todos os Services: remove pontuação de CPF, NIS, CEP e telefone antes de qualquer validação; `nome_completo` é normalizado para caixa alta sem acentos | `src/helpers/sanitizers.ts`, `src/services/IndividuoService.ts` |
-| D04 | Banco de dados de instâncias existentes não tinha a coluna `documento` obrigatória em `cadastrador`, causando erros de FK | A migration inicial não exigia o campo; bancos criados antes da sprint 4 estavam sem a constraint | Criada `002_exigir_documento_cadastrador.sql` para corrigir bancos antigos sem executar `001` novamente; documentada a ordem de execução no WAD | `documentos/migrations/002_exigir_documento_cadastrador.sql` |
+| D04 | Banco de dados de instâncias existentes exigia atualização incremental para manter o contrato do cadastro composto | O schema inicial evoluiu durante as sprints e bancos já criados precisavam receber migrations sem recriar toda a base | Criadas migrations UP/DOWN versionadas em `src/database/migrations/`, com ordem de execução documentada no WAD e no README | `src/database/migrations/002_cadastro_completo_up.sql` |
 | D05 | Telas de dashboard, mapa e completude exibiam erros de console em produção porque os endpoints que consomem (RF014, RF021, RF022) ainda não estão implementados | UI construída antecipando endpoints planejados | Todas as chamadas em `apiFetch()` têm `try/catch`; em caso de falha a tela renderiza um empty state ou `showToast()` com a mensagem do servidor, sem quebrar a navegação | `public/js/dashboard.js`, `mapa.js`, `completude.js` |
 | D06 | A FK circular entre `nucleo_familiar.id_chefe_familia` e `individuo.id_nucleo_familiar` impedia a criação do núcleo e do chefe na mesma operação | O núcleo exige um indivíduo como chefe, mas o indivíduo exige o núcleo existente — dependência mútua | O frontend resolve o ciclo em etapas sequenciais: cria o núcleo sem chefe → cria os indivíduos → faz `PUT` do núcleo definindo `id_chefe_familia`; o campo é `NULL` na criação e atualizado depois | `public/js/agente-cadastro.js`, `src/services/NucleoFamiliarService.ts` |
 # <a name="c5"></a>5. Testes

@@ -142,15 +142,15 @@
       return `<div class="admin-member" data-individuo-id="${individuo.id}"><h4>${individuo.nome_completo}</h4>
         <label>Nome <input data-ind-campo="nome_completo" value="${individuo.nome_completo || ''}" ${disabled}></label>
         <label>Telefone <input data-ind-campo="telefone" value="${individuo.telefone || ''}" ${disabled}></label>
-        <label>E-mail <input data-ind-campo="email" value="${individuo.email || ''}" ${disabled}></label>
+        <label>E-mail <input data-ind-campo="email" value="${individuo.email || ''}" ${disabled}></label><label>Foto (URL) <input data-ind-campo="foto_url" value="${individuo.foto_url || ''}" ${disabled}></label>
         <div class="admin-vulns">${dados.catalogoVulnerabilidades.map((v) => `<label><input type="checkbox" data-vuln-id="${v.id}" ${atuais.has(v.id) ? 'checked' : ''} ${disabled}> ${v.tipo_vulnerabilidade}</label>`).join('')}</div></div>`;
     }).join('');
-    const pets = dados.pets.map((pet) => `<div class="admin-pet" data-pet-id="${pet.id}"><input data-pet-campo="tipo" value="${pet.tipo || ''}" placeholder="Tipo" ${disabled}><input data-pet-campo="porte" value="${pet.porte || ''}" placeholder="Porte" ${disabled}><input data-pet-campo="quantidade" type="number" min="1" value="${pet.quantidade || ''}" placeholder="Qtd." ${disabled}>${somenteLeitura ? '' : '<button type="button" class="btn-textlink" data-remover-pet>Remover</button>'}</div>`).join('') || '<p data-sem-pets>Nenhum pet cadastrado.</p>';
+    const pets = dados.pets.map((pet) => `<div class="admin-pet" data-pet-id="${pet.id}"><input data-pet-campo="tipo" value="${pet.tipo || ''}" placeholder="Tipo" ${disabled}><input data-pet-campo="porte" value="${pet.porte || ''}" placeholder="Porte" ${disabled}><input data-pet-campo="quantidade" type="number" min="1" value="${pet.quantidade || ''}" placeholder="Qtd." ${disabled}><input data-pet-campo="imagem" value="${pet.imagem || ''}" placeholder="Imagem (URL)" ${disabled}>${somenteLeitura ? '' : '<button type="button" class="btn-textlink" data-remover-pet>Remover</button>'}</div>`).join('') || '<p data-sem-pets>Nenhum pet cadastrado.</p>';
     const painel = document.createElement('section');
     painel.id = 'familia-painel';
     painel.className = 'section-card';
     painel.innerHTML = `<div class="content-head"><h2>${somenteLeitura ? 'Detalhes da família' : 'Editar família'}</h2><button class="btn btn--ghost" data-fechar-painel>Fechar</button></div>
-      <div class="admin-grid"><label>Núcleo<input data-nucleo="nome_nucleo" value="${dados.nucleo.nome_nucleo || ''}" ${disabled}></label><label>Renda<input data-nucleo="renda_familiar_total" type="number" min="0" value="${dados.nucleo.renda_familiar_total ?? ''}" ${disabled}></label><label>Observação<textarea data-nucleo="observacao" ${disabled}>${dados.nucleo.observacao || ''}</textarea></label><label>Logradouro<input data-casa="logradouro" value="${casa.logradouro || ''}" ${disabled}></label><label>Número<input data-casa="numero" value="${casa.numero || ''}" ${disabled}></label><label>Bairro<input data-casa="bairro" value="${casa.bairro || ''}" ${disabled}></label><label>CEP<input data-casa="cep" value="${casa.cep || ''}" ${disabled}></label></div>
+      <div class="admin-grid"><label>Núcleo<input data-nucleo="nome_nucleo" value="${dados.nucleo.nome_nucleo || ''}" ${disabled}></label><label>Renda<input data-nucleo="renda_familiar_total" type="number" min="0" value="${dados.nucleo.renda_familiar_total ?? ''}" ${disabled}></label><label>Observação<textarea data-nucleo="observacao" ${disabled}>${dados.nucleo.observacao || ''}</textarea></label><label>Logradouro<input data-casa="logradouro" value="${casa.logradouro || ''}" ${disabled}></label><label>Número<input data-casa="numero" value="${casa.numero || ''}" ${disabled}></label><label>Bairro<input data-casa="bairro" value="${casa.bairro || ''}" ${disabled}></label><label>CEP<input data-casa="cep" value="${casa.cep || ''}" ${disabled}></label><label>Foto da fachada (URL)<input data-casa="foto_fachada_url" value="${casa.foto_fachada_url || ''}" ${disabled}></label><label>Foto complementar (URL)<input data-casa="foto_detalhe_url" value="${casa.foto_detalhe_url || ''}" ${disabled}></label></div>
       <h3>Membros e vulnerabilidades</h3>${vulnerabilidades}<h3>Pets</h3><div data-pets-admin>${pets}</div>${somenteLeitura ? '' : '<button type="button" class="btn btn--ghost" data-adicionar-pet>Adicionar pet</button> <button class="btn btn--blue" data-salvar-familia>Salvar alterações</button>'}`;
     document.querySelector('.page-content').prepend(painel);
     painel.querySelector('[data-fechar-painel]').addEventListener('click', () => painel.remove());
@@ -160,7 +160,7 @@
       const card = document.createElement('div');
       card.className = 'admin-pet';
       card.dataset.petId = 'novo';
-      card.innerHTML = '<input data-pet-campo="tipo" placeholder="Tipo"><input data-pet-campo="porte" placeholder="Porte"><input data-pet-campo="quantidade" type="number" min="1" placeholder="Qtd."><button type="button" class="btn-textlink" data-remover-pet>Remover</button>';
+      card.innerHTML = '<input data-pet-campo="tipo" placeholder="Tipo"><input data-pet-campo="porte" placeholder="Porte"><input data-pet-campo="quantidade" type="number" min="1" placeholder="Qtd."><input data-pet-campo="imagem" placeholder="Imagem (URL)"><button type="button" class="btn-textlink" data-remover-pet>Remover</button>';
       painel.querySelector('[data-pets-admin]').appendChild(card);
       card.querySelector('[data-remover-pet]').addEventListener('click', () => card.remove());
     });
@@ -180,10 +180,10 @@
     try {
       const valor = (seletor) => painel.querySelector(seletor)?.value.trim() || '';
       await apiFetch(`/nucleos-familiares/${dados.id}`, { method: 'PUT', body: JSON.stringify({ nome_nucleo: valor('[data-nucleo="nome_nucleo"]'), observacao: valor('[data-nucleo="observacao"]'), renda_familiar_total: valor('[data-nucleo="renda_familiar_total"]') ? Number(valor('[data-nucleo="renda_familiar_total"]')) : null }) });
-      if (dados.casa) await apiFetch(`/casas/${dados.casa.id}`, { method: 'PUT', body: JSON.stringify({ logradouro: valor('[data-casa="logradouro"]'), numero: valor('[data-casa="numero"]'), bairro: valor('[data-casa="bairro"]'), cep: valor('[data-casa="cep"]' ) || null }) });
+      if (dados.casa) await apiFetch(`/casas/${dados.casa.id}`, { method: 'PUT', body: JSON.stringify({ logradouro: valor('[data-casa="logradouro"]'), numero: valor('[data-casa="numero"]'), bairro: valor('[data-casa="bairro"]'), cep: valor('[data-casa="cep"]' ) || null, foto_fachada_url: valor('[data-casa="foto_fachada_url"]') || null, foto_detalhe_url: valor('[data-casa="foto_detalhe_url"]') || null }) });
       await Promise.all([...painel.querySelectorAll('[data-individuo-id]')].map(async (card, indice) => {
         const individuoId = card.dataset.individuoId;
-        await apiFetch(`/individuos/${individuoId}`, { method: 'PUT', body: JSON.stringify({ nome_completo: card.querySelector('[data-ind-campo="nome_completo"]').value.trim(), telefone: card.querySelector('[data-ind-campo="telefone"]').value.trim() || null, email: card.querySelector('[data-ind-campo="email"]').value.trim() || null }) });
+        await apiFetch(`/individuos/${individuoId}`, { method: 'PUT', body: JSON.stringify({ nome_completo: card.querySelector('[data-ind-campo="nome_completo"]').value.trim(), telefone: card.querySelector('[data-ind-campo="telefone"]').value.trim() || null, email: card.querySelector('[data-ind-campo="email"]').value.trim() || null, foto_url: card.querySelector('[data-ind-campo="foto_url"]').value.trim() || null }) });
         const atuais = new Set((dados.vinculos[indice] || []).map((v) => v.id));
         const escolhidas = new Set([...card.querySelectorAll('[data-vuln-id]:checked')].map((el) => Number(el.dataset.vulnId)));
         await Promise.all([...escolhidas].filter((v) => !atuais.has(v)).map((v) => apiFetch(`/vulnerabilidades/individuos/${individuoId}/${v}`, { method: 'POST' })));
@@ -191,7 +191,7 @@
       }));
       await Promise.all(JSON.parse(painel.dataset.petsRemovidos || '[]').map((petId) => apiFetch(`/pets/${petId}`, { method: 'DELETE' })));
       await Promise.all([...painel.querySelectorAll('[data-pet-id]')].map((card) => {
-        const payload = { tipo: card.querySelector('[data-pet-campo="tipo"]').value.trim() || null, porte: card.querySelector('[data-pet-campo="porte"]').value.trim() || null, quantidade: Number(card.querySelector('[data-pet-campo="quantidade"]').value) || null };
+        const payload = { tipo: card.querySelector('[data-pet-campo="tipo"]').value.trim() || null, porte: card.querySelector('[data-pet-campo="porte"]').value.trim() || null, quantidade: Number(card.querySelector('[data-pet-campo="quantidade"]').value) || null, imagem: card.querySelector('[data-pet-campo="imagem"]').value.trim() || null };
         return card.dataset.petId === 'novo'
           ? apiFetch('/pets', { method: 'POST', body: JSON.stringify({ id_nucleo_familiar: dados.id, ...payload }) })
           : apiFetch(`/pets/${card.dataset.petId}`, { method: 'PUT', body: JSON.stringify(payload) });

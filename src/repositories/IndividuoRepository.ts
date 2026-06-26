@@ -27,6 +27,7 @@ const individuoCreateDefaults: Partial<IndividuoInsert> = {
   status_vital: 'Vivo',
   data_obito: null,
   semanas_gestacao: null,
+  foto_url: null,
 };
 
 export class IndividuoRepository {
@@ -75,6 +76,7 @@ export class IndividuoRepository {
           'genero', 'cor_raca', 'uf', 'estado_civil', 'profissao', 'nome_mae', 'nome_pai',
           'grau_parentesco', 'escolaridade', 'situacao_ocupacional', 'cpf', 'doc_estrangeiro',
           'rg', 'nis', 'telefone', 'email', 'status_vital', 'data_obito', 'semanas_gestacao',
+          'foto_url',
         ]),
       )
       .eq('id', id)

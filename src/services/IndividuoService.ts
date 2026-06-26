@@ -35,7 +35,7 @@ export class IndividuoService {
   }
 
   async create(payload: CreateIndividuoDTO): Promise<Individuo> {
-    const sanitized = sanitizeObject(payload);
+    const sanitized = this.normalizeOptionalUrls(sanitizeObject(payload));
     this.validateCreate(sanitized);
     await this.nucleoFamiliarService.findById(String(sanitized.id_nucleo_familiar));
     await this.ensureUniqueDocuments(sanitized.cpf, sanitized.nis);
@@ -45,7 +45,7 @@ export class IndividuoService {
   async update(id: string, payload: UpdateIndividuoDTO): Promise<Individuo> {
     const parsedId = parsePositiveIntegerId(id);
     const current = await this.findById(id);
-    const sanitized = sanitizeObject(payload);
+    const sanitized = this.normalizeOptionalUrls(sanitizeObject(payload));
     this.validateUpdate(sanitized);
     if (sanitized.id_nucleo_familiar !== undefined) {
       await this.nucleoFamiliarService.findById(String(sanitized.id_nucleo_familiar));
@@ -61,6 +61,13 @@ export class IndividuoService {
     const parsedId = parsePositiveIntegerId(id);
     await this.findById(id);
     await this.individuoRepository.delete(parsedId);
+  }
+
+  private normalizeOptionalUrls<T extends CreateIndividuoDTO | UpdateIndividuoDTO>(payload: T): T {
+    return {
+      ...payload,
+      ...(payload.foto_url === '' ? { foto_url: null } : {}),
+    };
   }
 
   private validateCreate(payload: CreateIndividuoDTO): void {

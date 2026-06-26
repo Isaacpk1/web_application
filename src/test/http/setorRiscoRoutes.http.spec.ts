@@ -3,6 +3,31 @@ import request from 'supertest';
 
 dotenv.config();
 
+const mockSetor = {
+  id: 4,
+  codigo_setor: 'SETOR-004',
+  nome_regiao: 'VILA PALMARES',
+  tipo_risco: 'Deslizamento',
+  grau_risco: 'Alto',
+};
+
+jest.mock('../../repositories/SetorRepository', () => ({
+  SetorRepository: jest.fn().mockImplementation(() => ({
+    findAll: jest.fn().mockResolvedValue([mockSetor]),
+    findById: jest.fn((id: number) => Promise.resolve(id === 99999 ? null : { ...mockSetor, id })),
+    create: jest.fn((payload) => Promise.resolve({ ...mockSetor, ...payload, id: 4 })),
+    update: jest.fn((id, payload) => Promise.resolve({ ...mockSetor, ...payload, id })),
+    delete: jest.fn().mockResolvedValue(undefined),
+  })),
+}));
+
+jest.mock('../../repositories/NucleoFamiliarConsultaRepository', () => ({
+  NucleoFamiliarConsultaRepository: jest.fn().mockImplementation(() => ({
+    findCasaIdByNucleoFamiliarId: jest.fn((id: number) => Promise.resolve(id === 99999 ? null : 3)),
+    findSetorIdByNucleoFamiliarId: jest.fn((id: number) => Promise.resolve(id === 99999 ? null : 4)),
+  })),
+}));
+
 /**
  * Suite de testes HTTP para endpoints de Setores de Risco.
  *

@@ -6,7 +6,7 @@
     "type": "git",
     "url": "https://git.inteli.edu.br/graduacao/2026-1b/t25/g04.git"
   },
-  "license": "ISC",
+  "license": "CC-BY-4.0",
   "author": "",
   "type": "commonjs",
   "main": "dist/server.js",

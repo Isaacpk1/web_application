@@ -3,6 +3,69 @@ import request from 'supertest';
 
 dotenv.config();
 
+const mockNucleoFamiliar = {
+  id: 1,
+  nome_nucleo: 'FAMILIA SILVA',
+  id_casa: 1,
+  id_cadastrador: 1,
+  id_chefe_familia: null,
+  observacao: null,
+  tempo_residencia_domicilio: null,
+  tempo_residencia_area: null,
+  tempo_residencia_municipio: null,
+  renda_familiar_total: 2500,
+};
+
+const mockIndividuo = {
+  id: 2,
+  id_nucleo_familiar: 1,
+  nome_completo: 'JOAO SILVA',
+  apelido: null,
+  nome_social: null,
+  data_nascimento: '1990-05-10',
+  genero: 'Masculino',
+  cor_raca: null,
+  uf: null,
+  estado_civil: null,
+  profissao: null,
+  nome_mae: null,
+  nome_pai: null,
+  grau_parentesco: null,
+  escolaridade: null,
+  situacao_ocupacional: null,
+  cpf: null,
+  doc_estrangeiro: null,
+  rg: null,
+  nis: null,
+  telefone: null,
+  email: null,
+  status_vital: 'Vivo',
+  data_obito: null,
+  semanas_gestacao: null,
+};
+
+jest.mock('../../repositories/NucleoFamiliarRepository', () => ({
+  NucleoFamiliarRepository: jest.fn().mockImplementation(() => ({
+    findAll: jest.fn().mockResolvedValue([mockNucleoFamiliar]),
+    findById: jest.fn((id: number) => Promise.resolve(id === 99999 ? null : { ...mockNucleoFamiliar, id })),
+    create: jest.fn((payload) => Promise.resolve({ ...mockNucleoFamiliar, ...payload, id: 1 })),
+    update: jest.fn((id, payload) => Promise.resolve({ ...mockNucleoFamiliar, ...payload, id })),
+    delete: jest.fn().mockResolvedValue(undefined),
+  })),
+}));
+
+jest.mock('../../repositories/IndividuoRepository', () => ({
+  IndividuoRepository: jest.fn().mockImplementation(() => ({
+    findAll: jest.fn().mockResolvedValue([mockIndividuo]),
+    findById: jest.fn((id: number) => Promise.resolve(id === 99999 ? null : { ...mockIndividuo, id })),
+    findByNucleoFamiliarId: jest.fn().mockResolvedValue([mockIndividuo]),
+    existsByCpfOrNis: jest.fn().mockResolvedValue(false),
+    create: jest.fn((payload) => Promise.resolve({ ...mockIndividuo, ...payload, id: 2 })),
+    update: jest.fn((id, payload) => Promise.resolve({ ...mockIndividuo, ...payload, id })),
+    delete: jest.fn().mockResolvedValue(undefined),
+  })),
+}));
+
 /**
  * Suite de testes HTTP para endpoints de Núcleos Familiares (RF012).
  *

@@ -336,6 +336,7 @@
       doc_estrangeiro:       val('mf_doc_estrangeiro') || null,
       telefone:              val('mf_telefone') || null,
       email:                 val('mf_email') || null,
+      foto_url:              val('mf_foto_url') || null,
       nome_mae:              val('mf_nome_mae') || null,
       nome_pai:              val('mf_nome_pai') || null,
       grau_parentesco:       val('mf_grau_parentesco') || null,
@@ -351,7 +352,7 @@
       'mf_nome', 'mf_nascimento', 'mf_genero', 'mf_apelido', 'mf_nome_social', 'mf_cor_raca', 'mf_uf',
       'mf_data_obito', 'mf_cpf', 'mf_estado_civil', 'mf_rg', 'mf_nis', 'mf_doc_estrangeiro', 'mf_telefone',
       'mf_email', 'mf_nome_mae', 'mf_nome_pai', 'mf_grau_parentesco', 'mf_profissao', 'mf_escolaridade',
-      'mf_situacao_ocupacional', 'mf_semanas_gestacao',
+      'mf_situacao_ocupacional', 'mf_semanas_gestacao', 'mf_foto_url',
     ].forEach((id) => {
       const el = document.getElementById(id);
       if (el) el.value = '';
@@ -499,6 +500,7 @@
         <div class="m-review-row"><span class="m-review-key">Endereço</span><span class="m-review-val">${esc(enderecoLabel())}</span></div>
         <div class="m-review-row"><span class="m-review-key">GPS</span><span class="m-review-val">${state.gpsLat ? state.gpsLat.toFixed(4) + ', ' + state.gpsLng.toFixed(4) : 'Não capturado'}</span></div>
         <div class="m-review-row"><span class="m-review-key">Tipo / Uso</span><span class="m-review-val">${esc(val('m_tipo_construcao'))} / ${esc(val('m_uso_imovel'))}</span></div>
+        <div class="m-review-row"><span class="m-review-key">Fotos</span><span class="m-review-val">${[val('m_foto_fachada_url') && 'fachada', val('m_foto_detalhe_url') && 'complementar'].filter(Boolean).join(', ') || '&mdash;'}</span></div>
       </div>
       <div class="m-review-card">
         <div class="m-review-card__head">
@@ -623,6 +625,8 @@
             cep: val('m_cep').replace(/\D/g, '') || null,
             observacao: val('m_observacao_imovel') || null,
             data_interdicao: val('m_data_interdicao') || null,
+            foto_fachada_url: val('m_foto_fachada_url') || null,
+            foto_detalhe_url: val('m_foto_detalhe_url') || null,
           },
           nucleo_familiar: {
             nome_nucleo: val('m_nome_nucleo'), id_cadastrador: cadastradorComposto.id,

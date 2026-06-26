@@ -310,6 +310,17 @@
         <label class="m-field__label" for="m_observacao_imovel">Observação do imóvel</label>
         <input class="m-field__control" id="m_observacao_imovel" type="text" placeholder="Observação opcional…" />
       </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <div class="m-field" data-field>
+          <label class="m-field__label" for="m_foto_fachada_url">Foto da fachada (URL)</label>
+          <input class="m-field__control" id="m_foto_fachada_url" type="url" placeholder="https://..." autocomplete="off" />
+        </div>
+        <div class="m-field" data-field>
+          <label class="m-field__label" for="m_foto_detalhe_url">Foto complementar (URL)</label>
+          <input class="m-field__control" id="m_foto_detalhe_url" type="url" placeholder="https://..." autocomplete="off" />
+        </div>
+      </div>
     </section>
 
     <!-- PASSO 2 — Núcleo Familiar -->
@@ -479,6 +490,11 @@
         <div class="m-field" data-mf>
           <label class="m-field__label" for="mf_email">E-mail</label>
           <input class="m-field__control" id="mf_email" type="email" placeholder="email@exemplo.com" autocomplete="off" />
+        </div>
+
+        <div class="m-field" data-mf>
+          <label class="m-field__label" for="mf_foto_url">Foto da pessoa (URL)</label>
+          <input class="m-field__control" id="mf_foto_url" type="url" placeholder="https://..." autocomplete="off" />
         </div>
 
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">

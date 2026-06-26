@@ -35,6 +35,8 @@ export interface Casa extends Record<string, unknown> {
   uso_imovel: string;
   status_imovel: string;
   data_interdicao: string | null;
+  foto_fachada_url: string | null;
+  foto_detalhe_url: string | null;
 }
 
 export interface NucleoFamiliar extends Record<string, unknown> {
@@ -76,6 +78,7 @@ export interface Individuo extends Record<string, unknown> {
   status_vital: string;
   data_obito: string | null;
   semanas_gestacao: number | null;
+  foto_url: string | null;
 }
 
 export interface Pet extends Record<string, unknown> {
@@ -105,7 +108,7 @@ export type CadastradorInsert = Record<string, unknown> & Pick<Cadastrador, 'nom
 export type CadastradorUpdate = RowUpdate<Cadastrador>;
 export type CasaInsert = Record<string, unknown> &
   Pick<Casa, 'id_setor' | 'coordenada_lat' | 'coordenada_long' | 'tipo_construcao' | 'uso_imovel'> &
-  Partial<Pick<Casa, 'id' | 'logradouro' | 'numero' | 'bairro' | 'observacao' | 'cep' | 'status_imovel' | 'data_interdicao'>>;
+  Partial<Pick<Casa, 'id' | 'logradouro' | 'numero' | 'bairro' | 'observacao' | 'cep' | 'status_imovel' | 'data_interdicao' | 'foto_fachada_url' | 'foto_detalhe_url'>>;
 export type CasaUpdate = RowUpdate<Casa>;
 export type NucleoFamiliarInsert = Record<string, unknown> &
   Pick<NucleoFamiliar, 'nome_nucleo' | 'id_casa'> &
@@ -113,7 +116,7 @@ export type NucleoFamiliarInsert = Record<string, unknown> &
 export type NucleoFamiliarUpdate = RowUpdate<NucleoFamiliar>;
 export type IndividuoInsert = Record<string, unknown> &
   Pick<Individuo, 'id_nucleo_familiar' | 'nome_completo' | 'data_nascimento' | 'genero'> &
-  Partial<Pick<Individuo, 'id' | 'apelido' | 'nome_social' | 'cor_raca' | 'uf' | 'estado_civil' | 'profissao' | 'nome_mae' | 'nome_pai' | 'grau_parentesco' | 'escolaridade' | 'situacao_ocupacional' | 'cpf' | 'doc_estrangeiro' | 'rg' | 'nis' | 'telefone' | 'email' | 'status_vital' | 'data_obito' | 'semanas_gestacao'>>;
+  Partial<Pick<Individuo, 'id' | 'apelido' | 'nome_social' | 'cor_raca' | 'uf' | 'estado_civil' | 'profissao' | 'nome_mae' | 'nome_pai' | 'grau_parentesco' | 'escolaridade' | 'situacao_ocupacional' | 'cpf' | 'doc_estrangeiro' | 'rg' | 'nis' | 'telefone' | 'email' | 'status_vital' | 'data_obito' | 'semanas_gestacao' | 'foto_url'>>;
 export type IndividuoUpdate = RowUpdate<Individuo>;
 export type PetInsert = Record<string, unknown> &
   Pick<Pet, 'id_nucleo_familiar'> &

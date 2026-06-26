@@ -60,6 +60,8 @@ export const casa = (overrides: Partial<Casa> = {}): Casa => ({
   cep: '01234567',
   status_imovel: 'Sadio',
   data_interdicao: null,
+  foto_fachada_url: null,
+  foto_detalhe_url: null,
   ...overrides,
 });
 
@@ -131,6 +133,7 @@ export const individuo = (overrides: Partial<Individuo> = {}): Individuo => ({
   status_vital: 'Vivo',
   data_obito: null,
   semanas_gestacao: null,
+  foto_url: null,
   ...overrides,
 });
 

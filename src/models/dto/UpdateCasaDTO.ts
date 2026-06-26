@@ -13,4 +13,6 @@ export interface UpdateCasaDTO {
   uso_imovel?: UsoImovel;
   status_imovel?: StatusImovel;
   data_interdicao?: string | null;
+  foto_fachada_url?: string | null;
+  foto_detalhe_url?: string | null;
 }

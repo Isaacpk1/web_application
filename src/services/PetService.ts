@@ -29,16 +29,18 @@ export class PetService {
   }
 
   async create(payload: CreatePetDTO): Promise<Pet> {
-    this.validateCreate(payload);
-    await this.nucleoFamiliarService.findById(String(payload.id_nucleo_familiar));
-    return this.petRepository.create(payload);
+    const normalized = this.normalizeOptionalImage(payload);
+    this.validateCreate(normalized);
+    await this.nucleoFamiliarService.findById(String(normalized.id_nucleo_familiar));
+    return this.petRepository.create(normalized);
   }
 
   async update(id: string, payload: UpdatePetDTO): Promise<Pet> {
     const parsedId = parsePositiveIntegerId(id);
     await this.findById(id);
-    if (Object.keys(payload).length === 0) throw new BadRequestError('Informe ao menos um campo para atualizar');
-    return this.petRepository.update(parsedId, payload);
+    const normalized = this.normalizeOptionalImage(payload);
+    if (Object.keys(normalized).length === 0) throw new BadRequestError('Informe ao menos um campo para atualizar');
+    return this.petRepository.update(parsedId, normalized);
   }
 
   async delete(id: string): Promise<void> {
@@ -56,5 +58,12 @@ export class PetService {
         throw new BadRequestError('Quantidade deve ser um numero inteiro nao negativo');
       }
     }
+  }
+
+  private normalizeOptionalImage<T extends CreatePetDTO | UpdatePetDTO>(payload: T): T {
+    return {
+      ...payload,
+      ...(payload.imagem === '' ? { imagem: null } : {}),
+    };
   }
 }

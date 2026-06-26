@@ -55,6 +55,8 @@ export class CasaService {
       ...(payload.logradouro === '' ? { logradouro: null } : {}),
       ...(payload.numero === '' ? { numero: null } : {}),
       ...(payload.bairro === '' ? { bairro: null } : {}),
+      ...(payload.foto_fachada_url === '' ? { foto_fachada_url: null } : {}),
+      ...(payload.foto_detalhe_url === '' ? { foto_detalhe_url: null } : {}),
     };
   }
 

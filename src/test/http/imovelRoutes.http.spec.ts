@@ -3,6 +3,39 @@ import request from 'supertest';
 
 dotenv.config();
 
+const mockCasa = {
+  id: 3,
+  id_setor: 1,
+  coordenada_lat: -23.5505,
+  coordenada_long: -46.6333,
+  logradouro: 'RUA A',
+  numero: '123',
+  observacao: null,
+  bairro: 'CENTRO',
+  cep: '09030320',
+  tipo_construcao: 'Alvenaria',
+  uso_imovel: 'Residencial',
+  status_imovel: 'Sadio',
+  data_interdicao: null,
+};
+
+jest.mock('../../repositories/CasaRepository', () => ({
+  CasaRepository: jest.fn().mockImplementation(() => ({
+    findAll: jest.fn().mockResolvedValue([mockCasa]),
+    findById: jest.fn((id: number) => Promise.resolve(id === 99999 ? null : { ...mockCasa, id })),
+    create: jest.fn((payload) => Promise.resolve({ ...mockCasa, ...payload, id: 3 })),
+    update: jest.fn((id, payload) => Promise.resolve({ ...mockCasa, ...payload, id })),
+    delete: jest.fn().mockResolvedValue(undefined),
+  })),
+}));
+
+jest.mock('../../repositories/NucleoFamiliarConsultaRepository', () => ({
+  NucleoFamiliarConsultaRepository: jest.fn().mockImplementation(() => ({
+    findCasaIdByNucleoFamiliarId: jest.fn((id: number) => Promise.resolve(id === 99999 ? null : 3)),
+    findSetorIdByNucleoFamiliarId: jest.fn((id: number) => Promise.resolve(id === 99999 ? null : 1)),
+  })),
+}));
+
 /**
  * Suite de testes HTTP para endpoints de Casas/Imóveis.
  *
