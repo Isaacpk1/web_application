@@ -23,10 +23,13 @@
             <div style="font-size:16px;font-weight:700;color:#1a1a2e;margin-bottom:6px;">Cadastros por Bairro</div>
             <div style="font-size:13px;color:#6b7280;line-height:1.5;">Total de famílias cadastradas agrupadas por bairro e nível de risco.</div>
           </div>
-          <button class="btn btn--export" style="align-self:flex-start;" onclick="showToast('Em desenvolvimento', 'info')">
+          <div class="export-actions" data-report-actions="bairro">
+          <button class="btn btn--export" data-export-format="excel">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-            Exportar CSV
+            Excel
           </button>
+          <button class="btn btn--export" data-export-format="pdf">PDF</button>
+          </div>
         </div>
 
         <div class="section-card" style="padding:28px;display:flex;flex-direction:column;gap:16px;">
@@ -35,10 +38,13 @@
             <div style="font-size:16px;font-weight:700;color:#1a1a2e;margin-bottom:6px;">Famílias em Risco</div>
             <div style="font-size:13px;color:#6b7280;line-height:1.5;">Lista de famílias com nível de risco ALTO ou MUITO_ALTO para priorização de visitas.</div>
           </div>
-          <button class="btn btn--export" style="align-self:flex-start;" onclick="showToast('Em desenvolvimento', 'info')">
+          <div class="export-actions" data-report-actions="risco">
+          <button class="btn btn--export" data-export-format="excel">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-            Exportar CSV
+            Excel
           </button>
+          <button class="btn btn--export" data-export-format="pdf">PDF</button>
+          </div>
         </div>
 
         <div class="section-card" style="padding:28px;display:flex;flex-direction:column;gap:16px;">
@@ -47,10 +53,13 @@
             <div style="font-size:16px;font-weight:700;color:#1a1a2e;margin-bottom:6px;">Completude de Cadastros</div>
             <div style="font-size:13px;color:#6b7280;line-height:1.5;">Relatório de campos preenchidos vs. faltantes por família, com taxa de completude.</div>
           </div>
-          <button class="btn btn--export" style="align-self:flex-start;" onclick="showToast('Em desenvolvimento', 'info')">
+          <div class="export-actions" data-report-actions="completude">
+          <button class="btn btn--export" data-export-format="excel">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-            Exportar CSV
+            Excel
           </button>
+          <button class="btn btn--export" data-export-format="pdf">PDF</button>
+          </div>
         </div>
 
         <div class="section-card" style="padding:28px;display:flex;flex-direction:column;gap:16px;">
@@ -59,10 +68,13 @@
             <div style="font-size:16px;font-weight:700;color:#1a1a2e;margin-bottom:6px;">Vulnerabilidades</div>
             <div style="font-size:13px;color:#6b7280;line-height:1.5;">Indicadores de vulnerabilidade (idosos, gestantes, PCD) consolidados por setor.</div>
           </div>
-          <button class="btn btn--export" style="align-self:flex-start;" onclick="showToast('Em desenvolvimento', 'info')">
+          <div class="export-actions" data-report-actions="vulnerabilidades">
+          <button class="btn btn--export" data-export-format="excel">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-            Exportar CSV
+            Excel
           </button>
+          <button class="btn btn--export" data-export-format="pdf">PDF</button>
+          </div>
         </div>
 
       </div>
@@ -70,5 +82,6 @@
   </div>
 </div>
 <script src="/js/api.js"></script>
+<script src="/js/relatorios.js?v=20260626-1"></script>
 </body>
 </html>
