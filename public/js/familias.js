@@ -31,6 +31,13 @@
     searchTimer = setTimeout(() => { currentPage = 1; load(); }, 300);
   });
 
+  function formatEndereco(item) {
+    const rua = item.logradouro || '';
+    const numero = item.numero ? `, ${item.numero}` : '';
+    const bairro = item.bairro ? ` - ${item.bairro}` : '';
+    return `${rua}${numero}${bairro}` || '—';
+  }
+
   async function load() {
     tableWrap.innerHTML = '<div class="state-loading">Carregando…</div>';
     tableFooter.style.display = 'none';
@@ -74,7 +81,8 @@
       <tr>
         <td><strong>${f.nome_familia || '—'}</strong></td>
         <td>${f.nome_responsavel || '—'}</td>
-        <td>${f.bairro || '—'}</td>
+        <td>${f.codigo_setor || '—'}</td>
+        <td>${formatEndereco(f)}</td>
         <td>${nivelRiscoBadge(f.nivel_risco)}</td>
         <td>${formatDate(f.data_cadastro || f.ultima_visita)}</td>
         <td class="cell-actions">
@@ -89,7 +97,8 @@
           <tr>
             <th>Família</th>
             <th>Responsável</th>
-            <th>Bairro</th>
+            <th>Setor</th>
+            <th>Endereço</th>
             <th>Risco</th>
             <th>Última visita</th>
             <th>Ações</th>
@@ -170,7 +179,7 @@
   async function salvarPainel(dados, painel) {
     try {
       const valor = (seletor) => painel.querySelector(seletor)?.value.trim() || '';
-      await apiFetch(`/nucleos-familiares/${dados.id}`, { method: 'PUT', body: JSON.stringify({ nome_nucleo: valor('[data-nucleo="nome_nucleo"]'), observacao: valor('[data-nucleo="observacao"]'), ...(valor('[data-nucleo="renda_familiar_total"]') ? { renda_familiar_total: Number(valor('[data-nucleo="renda_familiar_total"]')) } : {}) }) });
+      await apiFetch(`/nucleos-familiares/${dados.id}`, { method: 'PUT', body: JSON.stringify({ nome_nucleo: valor('[data-nucleo="nome_nucleo"]'), observacao: valor('[data-nucleo="observacao"]'), renda_familiar_total: valor('[data-nucleo="renda_familiar_total"]') ? Number(valor('[data-nucleo="renda_familiar_total"]')) : null }) });
       if (dados.casa) await apiFetch(`/casas/${dados.casa.id}`, { method: 'PUT', body: JSON.stringify({ logradouro: valor('[data-casa="logradouro"]'), numero: valor('[data-casa="numero"]'), bairro: valor('[data-casa="bairro"]'), cep: valor('[data-casa="cep"]' ) || null }) });
       await Promise.all([...painel.querySelectorAll('[data-individuo-id]')].map(async (card, indice) => {
         const individuoId = card.dataset.individuoId;
@@ -231,8 +240,8 @@
       showToast('Nao ha registros para exportar nesta pagina.', 'info');
       return;
     }
-    const colunas = ['Familia', 'Responsavel', 'Bairro', 'Nivel de risco', 'Membros'];
-    const linhas = ultimosResultados.map((f) => [f.nome_familia, f.nome_responsavel, f.bairro, f.nivel_risco, f.qtd_membros]);
+    const colunas = ['Familia', 'Responsavel', 'Setor', 'Logradouro', 'Numero', 'Bairro', 'Nivel de risco', 'Membros'];
+    const linhas = ultimosResultados.map((f) => [f.nome_familia, f.nome_responsavel, f.codigo_setor, f.logradouro, f.numero, f.bairro, f.nivel_risco, f.qtd_membros]);
     const csv = [colunas, ...linhas].map((linha) => linha.map((v) => `"${String(v ?? '').replace(/"/g, '""')}"`).join(';')).join('\n');
     const url = URL.createObjectURL(new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8' }));
     const link = document.createElement('a');

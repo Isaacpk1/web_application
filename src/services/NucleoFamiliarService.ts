@@ -73,7 +73,7 @@ export class NucleoFamiliarService {
     if (payload.id_chefe_familia !== undefined && payload.id_chefe_familia !== null) {
       this.validatePositiveId(payload.id_chefe_familia, 'id_chefe_familia');
     }
-    if (payload.renda_familiar_total !== undefined) {
+    if (payload.renda_familiar_total !== undefined && payload.renda_familiar_total !== null) {
       assertNumber(payload.renda_familiar_total, 'renda_familiar_total');
       if (payload.renda_familiar_total < 0) throw new BadRequestError('Renda familiar total nao pode ser negativa');
     }

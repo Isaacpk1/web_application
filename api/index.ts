@@ -1,4 +1,8 @@
+import type { IncomingMessage, ServerResponse } from 'http';
+
 import { app } from '../src/app';
 
-// A Vercel usa o Express diretamente como handler serverless.
-export default app;
+// A Vercel espera que o default export seja uma funcao handler.
+export default function handler(req: IncomingMessage, res: ServerResponse) {
+  return app(req, res);
+}

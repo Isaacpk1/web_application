@@ -32,11 +32,6 @@ BEGIN
        OR NOT EXISTS (SELECT 1 FROM setor WHERE id = (v_casa->>'id_setor')::INTEGER AND ativo) THEN
         RAISE EXCEPTION 'Endereco invalido: setor inexistente ou inativo' USING ERRCODE = '22023';
     END IF;
-    IF BTRIM(COALESCE(v_casa->>'logradouro', '')) = ''
-       OR BTRIM(COALESCE(v_casa->>'numero', '')) = ''
-       OR BTRIM(COALESCE(v_casa->>'bairro', '')) = '' THEN
-        RAISE EXCEPTION 'Endereco invalido: logradouro, numero e bairro sao obrigatorios' USING ERRCODE = '22023';
-    END IF;
     IF COALESCE(p_payload->>'responsavel_indice', '') !~ '^[0-9]+$'
        OR (p_payload->>'responsavel_indice')::INTEGER >= jsonb_array_length(p_payload->'individuos') THEN
         RAISE EXCEPTION 'Responsavel invalido: selecione um membro do nucleo' USING ERRCODE = '22023';
@@ -59,7 +54,9 @@ BEGIN
 
     INSERT INTO casa (id_setor, coordenada_lat, coordenada_long, logradouro, numero, bairro, observacao, cep, tipo_construcao, uso_imovel, status_imovel, data_interdicao)
     VALUES ((v_casa->>'id_setor')::INTEGER, (v_casa->>'coordenada_lat')::DECIMAL, (v_casa->>'coordenada_long')::DECIMAL,
-        UPPER(BTRIM(v_casa->>'logradouro')), UPPER(BTRIM(v_casa->>'numero')), UPPER(BTRIM(v_casa->>'bairro')),
+        NULLIF(UPPER(BTRIM(COALESCE(v_casa->>'logradouro', ''))), ''),
+        NULLIF(UPPER(BTRIM(COALESCE(v_casa->>'numero', ''))), ''),
+        NULLIF(UPPER(BTRIM(COALESCE(v_casa->>'bairro', ''))), ''),
         NULLIF(v_casa->>'observacao', ''), NULLIF(v_casa->>'cep', ''), v_casa->>'tipo_construcao', v_casa->>'uso_imovel',
         COALESCE(v_casa->>'status_imovel', 'Sadio'), NULLIF(v_casa->>'data_interdicao', '')::DATE)
     ON CONFLICT (id_setor, bairro, logradouro, numero) DO UPDATE SET id = casa.id
@@ -81,7 +78,7 @@ BEGIN
     VALUES (UPPER(BTRIM(v_nucleo->>'nome_nucleo')), v_casa_id, (v_nucleo->>'id_cadastrador')::INTEGER,
         NULLIF(v_nucleo->>'observacao', ''), NULLIF(v_nucleo->>'tempo_residencia_domicilio', '')::INTEGER,
         NULLIF(v_nucleo->>'tempo_residencia_area', '')::INTEGER, NULLIF(v_nucleo->>'tempo_residencia_municipio', '')::INTEGER,
-        COALESCE(NULLIF(v_nucleo->>'renda_familiar_total', '')::DECIMAL, 0)) RETURNING id INTO v_nucleo_id;
+        NULLIF(v_nucleo->>'renda_familiar_total', '')::DECIMAL) RETURNING id INTO v_nucleo_id;
 
     FOR v_membro IN SELECT value FROM jsonb_array_elements(p_payload->'individuos') LOOP
         v_cpf := NULLIF(regexp_replace(COALESCE(v_membro->>'cpf', ''), '\D', '', 'g'), '');

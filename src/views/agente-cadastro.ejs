@@ -4,10 +4,24 @@
   <%- include('partials/head', { title }) %>
   <meta name="theme-color" content="#0d1726" />
   <style>
-    body { background: #f4f5f7; }
+    body { background: #fff; }
 
-    /* ── App shell ── */
-    .m-app { max-width: 420px; margin: 0 auto; min-height: 100vh; min-height: 100dvh; background: #fff; display: flex; flex-direction: column; box-shadow: 0 0 40px rgba(0,0,0,.08); }
+    /* ── Anula o layout "card mobile" que vem do styles.css global ── */
+    .m-app {
+      max-width: none; margin: 0; width: 100%;
+      display: block; box-shadow: none; border-radius: 0; overflow: visible;
+      background: #fff;
+    }
+    .m-body { max-height: none; overflow-y: visible; flex: none; }
+    @media (min-width: 768px) {
+      .m-app { max-width: none; min-height: auto; border-radius: 0; box-shadow: none; overflow: visible; }
+      .m-body { max-height: none; overflow-y: visible; }
+      .agente-body { display: block; }
+    }
+    @media (min-width: 1024px) {
+      .m-app { max-width: none; }
+      .m-body { max-height: none; }
+    }
 
     /* ── Topbar ── */
     .m-topbar { background: #0d1726; color: #fff; min-height: 52px; display: flex; align-items: center; gap: 8px; padding: 0 12px 0 4px; position: sticky; top: 0; z-index: 20; }
@@ -30,7 +44,7 @@
     .m-step-item.is-done .m-step-item__label  { color: #22c55e; }
 
     /* ── Body ── */
-    .m-body { flex: 1; overflow-y: auto; padding: 20px 16px; }
+    .m-body { padding: 20px 16px 90px; }
     .m-card-title { font-size: 18px; font-weight: 800; color: #0D1726; margin-bottom: 4px; }
     .m-card-sub   { font-size: 13px; color: #6B7280; margin-bottom: 16px; }
     .m-card-divider { height: 1px; background: #E5E7EB; margin-bottom: 20px; }
@@ -100,7 +114,7 @@
     .m-success__actions { width: 100%; display: flex; flex-direction: column; gap: 10px; }
 
     /* ── Footer ── */
-    .m-footer { padding: 12px 16px; background: #fff; border-top: 1px solid #E5E7EB; display: flex; align-items: center; justify-content: space-between; position: sticky; bottom: 0; gap: 8px; }
+    .m-footer { padding: 12px 16px; background: #fff; border-top: 1px solid #E5E7EB; display: flex; align-items: center; justify-content: space-between; position: fixed; bottom: 0; left: 0; right: 0; gap: 8px; z-index: 15; }
     .m-footer__hint { font-size: 12px; color: #9CA3AF; flex: 1; }
     .m-footer__actions { display: flex; gap: 8px; }
     .m-btn { padding: 11px 20px; border-radius: 10px; font-size: 14px; font-weight: 700; border: none; cursor: pointer; transition: background .15s; }
@@ -142,9 +156,15 @@
 
     /* ── Tablet / Desktop ── */
     @media (min-width: 768px) {
-      body { display: flex; align-items: flex-start; justify-content: center; padding: 32px 16px 48px; min-height: 100vh; }
-      .m-app { max-width: 480px; border-radius: 20px; overflow: hidden; box-shadow: 0 8px 40px rgba(0,0,0,.14); min-height: auto; }
-      .m-body { max-height: 580px; }
+      .m-body    { padding: 28px 48px 90px; }
+      .m-stepper { padding: 16px 48px 12px; }
+      .m-footer  { padding: 14px 48px; }
+    }
+
+    @media (min-width: 1200px) {
+      .m-body    { padding: 32px 80px 90px; }
+      .m-stepper { padding: 16px 80px 12px; }
+      .m-footer  { padding: 14px 80px; }
     }
   </style>
 </head>
@@ -228,22 +248,19 @@
         </div>
       </div>
 
-      <div class="m-field" data-field data-required>
-        <label class="m-field__label" for="m_logradouro">Logradouro <span class="m-field__req">*</span></label>
+      <div class="m-field" data-field>
+        <label class="m-field__label" for="m_logradouro">Logradouro</label>
         <input class="m-field__control" id="m_logradouro" type="text" placeholder="Rua, Avenida, Travessa…" autocomplete="street-address" />
-        <span class="m-field__error">Informe o logradouro.</span>
       </div>
 
       <div style="display:grid;grid-template-columns:2fr 1fr;gap:10px">
-        <div class="m-field" data-field data-required>
-          <label class="m-field__label" for="m_bairro">Bairro <span class="m-field__req">*</span></label>
+        <div class="m-field" data-field>
+          <label class="m-field__label" for="m_bairro">Bairro</label>
           <input class="m-field__control" id="m_bairro" type="text" placeholder="Bairro" />
-          <span class="m-field__error">Informe o bairro.</span>
         </div>
-        <div class="m-field" data-field data-required>
-          <label class="m-field__label" for="m_numero">Número <span class="m-field__req">*</span></label>
+        <div class="m-field" data-field>
+          <label class="m-field__label" for="m_numero">Número</label>
           <input class="m-field__control" id="m_numero" type="text" placeholder="Nº ou S/N" />
-          <span class="m-field__error">Informe o número ou S/N.</span>
         </div>
       </div>
 

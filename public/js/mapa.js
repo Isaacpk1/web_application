@@ -28,7 +28,10 @@
     const badgeColor = COLORS[p.nivel_risco] || '#6B7280';
     return `<div class="map-popup">
       <h3>${p.nome_familia}</h3>
-      <div class="map-popup-row"><span>Bairro:</span><span>${p.bairro}</span></div>
+      <div class="map-popup-row"><span>Setor:</span><span>${p.codigo_setor || '—'}</span></div>
+      <div class="map-popup-row"><span>Logradouro:</span><span>${p.logradouro || '—'}</span></div>
+      <div class="map-popup-row"><span>Número:</span><span>${p.numero || '—'}</span></div>
+      <div class="map-popup-row"><span>Bairro:</span><span>${p.bairro || '—'}</span></div>
       <div class="map-popup-row"><span>Responsável:</span><span>${p.responsavel}</span></div>
       <div class="map-popup-row"><span>Nível de risco:</span>
         <span style="background:${badgeColor};color:#fff;padding:2px 8px;border-radius:12px;font-size:11px;font-weight:700;">${p.nivel_risco}</span>

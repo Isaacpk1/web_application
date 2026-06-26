@@ -71,6 +71,21 @@
     return `${d}/${m}/${y}`;
   }
 
+  function setorLabel(setor) {
+    const codigo = setor.codigo_setor ? String(setor.codigo_setor).trim() : '';
+    const nome = setor.nome_regiao ? String(setor.nome_regiao).trim() : '';
+    const base = codigo && nome && codigo !== nome ? `${codigo} - ${nome}` : (codigo || nome);
+    return base + (setor.grau_risco ? ' — ' + setor.grau_risco : '');
+  }
+
+  function enderecoLabel() {
+    return [
+      val('m_logradouro'),
+      val('m_numero') ? `Nº ${val('m_numero')}` : '',
+      val('m_bairro'),
+    ].filter(Boolean).join(' — ') || '—';
+  }
+
   function calcAge(iso) {
     if (!iso) return 0;
     const dob = new Date(iso + 'T00:00:00');
@@ -206,7 +221,7 @@
       list.forEach((s) => {
         const opt = document.createElement('option');
         opt.value       = String(s.id);
-        opt.textContent = s.nome_regiao + (s.grau_risco ? ' — ' + s.grau_risco : '');
+        opt.textContent = setorLabel(s);
         select.appendChild(opt);
       });
       if (list.length === 1) select.value = String(list[0].id);
@@ -481,7 +496,7 @@
           <button type="button" class="m-review-card__edit" data-go-step="1">Editar &rarr;</button>
         </div>
         <div class="m-review-row"><span class="m-review-key">Setor</span><span class="m-review-val">${esc(setorText)}</span></div>
-        <div class="m-review-row"><span class="m-review-key">Endereço</span><span class="m-review-val">${esc(val('m_logradouro'))}, ${esc(val('m_numero'))} — ${esc(val('m_bairro'))}</span></div>
+        <div class="m-review-row"><span class="m-review-key">Endereço</span><span class="m-review-val">${esc(enderecoLabel())}</span></div>
         <div class="m-review-row"><span class="m-review-key">GPS</span><span class="m-review-val">${state.gpsLat ? state.gpsLat.toFixed(4) + ', ' + state.gpsLng.toFixed(4) : 'Não capturado'}</span></div>
         <div class="m-review-row"><span class="m-review-key">Tipo / Uso</span><span class="m-review-val">${esc(val('m_tipo_construcao'))} / ${esc(val('m_uso_imovel'))}</span></div>
       </div>
@@ -602,7 +617,7 @@
         body: JSON.stringify({
           casa: {
             id_setor: Number(val('m_setor')), coordenada_lat: state.gpsLat, coordenada_long: state.gpsLng,
-            logradouro: val('m_logradouro'), numero: val('m_numero'), bairro: val('m_bairro'),
+            logradouro: val('m_logradouro') || null, numero: val('m_numero') || null, bairro: val('m_bairro') || null,
             tipo_construcao: val('m_tipo_construcao'), uso_imovel: val('m_uso_imovel'),
             status_imovel: val('m_status_imovel') || 'Sadio',
             cep: val('m_cep').replace(/\D/g, '') || null,

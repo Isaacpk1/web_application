@@ -1,0 +1,1 @@
+DROP VIEW IF EXISTS setor_api;

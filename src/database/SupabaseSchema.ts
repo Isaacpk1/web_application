@@ -1,5 +1,6 @@
 export interface Setor extends Record<string, unknown> {
   id: number;
+  codigo_setor: string;
   nome_regiao: string;
   tipo_risco: string;
   grau_risco: string | null;
@@ -8,6 +9,7 @@ export interface Setor extends Record<string, unknown> {
 /** View de leitura que resume os tipos e o maior grau de risco do setor. */
 export interface SetorApi extends Record<string, unknown> {
   id: number;
+  codigo_setor: string;
   nome_regiao: string;
   tipo_risco: string | null;
   grau_risco: string | null;
@@ -24,10 +26,10 @@ export interface Casa extends Record<string, unknown> {
   id_setor: number;
   coordenada_lat: number;
   coordenada_long: number;
-  logradouro: string;
-  numero: string;
+  logradouro: string | null;
+  numero: string | null;
   observacao: string | null;
-  bairro: string;
+  bairro: string | null;
   cep: string | null;
   tipo_construcao: string;
   uso_imovel: string;
@@ -45,7 +47,7 @@ export interface NucleoFamiliar extends Record<string, unknown> {
   tempo_residencia_domicilio: number | null;
   tempo_residencia_area: number | null;
   tempo_residencia_municipio: number | null;
-  renda_familiar_total: number;
+  renda_familiar_total: number | null;
 }
 
 export interface Individuo extends Record<string, unknown> {
@@ -97,13 +99,13 @@ export interface IndividuoVulnerabilidade extends Record<string, unknown> {
 
 type RowUpdate<Row extends { id: number }> = Record<string, unknown> & Partial<Omit<Row, 'id'>>;
 
-export type SetorInsert = Record<string, unknown> & Pick<Setor, 'nome_regiao' | 'tipo_risco'> & Partial<Pick<Setor, 'id' | 'grau_risco'>>;
+export type SetorInsert = Record<string, unknown> & Pick<Setor, 'nome_regiao' | 'tipo_risco'> & Partial<Pick<Setor, 'id' | 'codigo_setor' | 'grau_risco'>>;
 export type SetorUpdate = RowUpdate<Setor>;
 export type CadastradorInsert = Record<string, unknown> & Pick<Cadastrador, 'nome' | 'documento'> & Partial<Pick<Cadastrador, 'id'>>;
 export type CadastradorUpdate = RowUpdate<Cadastrador>;
 export type CasaInsert = Record<string, unknown> &
-  Pick<Casa, 'id_setor' | 'coordenada_lat' | 'coordenada_long' | 'logradouro' | 'numero' | 'bairro' | 'tipo_construcao' | 'uso_imovel'> &
-  Partial<Pick<Casa, 'id' | 'observacao' | 'cep' | 'status_imovel' | 'data_interdicao'>>;
+  Pick<Casa, 'id_setor' | 'coordenada_lat' | 'coordenada_long' | 'tipo_construcao' | 'uso_imovel'> &
+  Partial<Pick<Casa, 'id' | 'logradouro' | 'numero' | 'bairro' | 'observacao' | 'cep' | 'status_imovel' | 'data_interdicao'>>;
 export type CasaUpdate = RowUpdate<Casa>;
 export type NucleoFamiliarInsert = Record<string, unknown> &
   Pick<NucleoFamiliar, 'nome_nucleo' | 'id_casa'> &

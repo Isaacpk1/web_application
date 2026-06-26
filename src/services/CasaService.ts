@@ -1,6 +1,6 @@
 import { BadRequestError, NotFoundError } from '../helpers/errors';
 import { sanitizeObject } from '../helpers/sanitizers';
-import { assertCep, assertNonEmptyString, assertNumber, parsePositiveIntegerId } from '../helpers/validators';
+import { assertCep, assertNumber, parsePositiveIntegerId } from '../helpers/validators';
 import { CreateCasaDTO } from '../models/dto/CreateCasaDTO';
 import { UpdateCasaDTO } from '../models/dto/UpdateCasaDTO';
 import { Casa, StatusImovel, TipoConstrucao, UsoImovel } from '../models/domain/Casa';
@@ -35,7 +35,7 @@ export class CasaService {
   }
 
   async create(payload: CreateCasaDTO): Promise<Casa> {
-    const sanitizedPayload = sanitizeObject(payload);
+    const sanitizedPayload = this.normalizeEndereco(sanitizeObject(payload));
     this.validateCreate(sanitizedPayload);
     return this.casaRepository.create(sanitizedPayload);
   }
@@ -43,10 +43,19 @@ export class CasaService {
   async update(id: string, payload: UpdateCasaDTO): Promise<Casa> {
     const parsedId = parsePositiveIntegerId(id);
     const current = await this.findById(id);
-    const sanitizedPayload = sanitizeObject(payload);
+    const sanitizedPayload = this.normalizeEndereco(sanitizeObject(payload));
     this.validateUpdate(sanitizedPayload);
     this.validateInterdicao({ ...current, ...sanitizedPayload });
     return this.casaRepository.update(parsedId, sanitizedPayload);
+  }
+
+  private normalizeEndereco<T extends CreateCasaDTO | UpdateCasaDTO>(payload: T): T {
+    return {
+      ...payload,
+      ...(payload.logradouro === '' ? { logradouro: null } : {}),
+      ...(payload.numero === '' ? { numero: null } : {}),
+      ...(payload.bairro === '' ? { bairro: null } : {}),
+    };
   }
 
   async delete(id: string): Promise<void> {
@@ -60,9 +69,6 @@ export class CasaService {
     assertNumber(payload.coordenada_lat, 'coordenada_lat');
     assertNumber(payload.coordenada_long, 'coordenada_long');
     this.validateCoordinates(payload.coordenada_lat, payload.coordenada_long);
-    assertNonEmptyString(payload.logradouro, 'logradouro');
-    assertNonEmptyString(payload.numero, 'numero');
-    assertNonEmptyString(payload.bairro, 'bairro');
     if (payload.cep !== undefined && payload.cep !== null) assertCep(payload.cep);
     this.validateTipoConstrucao(payload.tipo_construcao);
     this.validateUsoImovel(payload.uso_imovel);
@@ -76,9 +82,6 @@ export class CasaService {
     if (payload.coordenada_lat !== undefined) assertNumber(payload.coordenada_lat, 'coordenada_lat');
     if (payload.coordenada_long !== undefined) assertNumber(payload.coordenada_long, 'coordenada_long');
     this.validateCoordinates(payload.coordenada_lat, payload.coordenada_long);
-    if (payload.logradouro !== undefined) assertNonEmptyString(payload.logradouro, 'logradouro');
-    if (payload.numero !== undefined) assertNonEmptyString(payload.numero, 'numero');
-    if (payload.bairro !== undefined) assertNonEmptyString(payload.bairro, 'bairro');
     if (payload.cep !== undefined && payload.cep !== null) assertCep(payload.cep);
     if (payload.tipo_construcao !== undefined) this.validateTipoConstrucao(payload.tipo_construcao);
     if (payload.uso_imovel !== undefined) this.validateUsoImovel(payload.uso_imovel);

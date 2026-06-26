@@ -14,7 +14,10 @@ export interface MapaPonto {
   lat: number;
   lng: number;
   nivel_risco: string;
+  codigo_setor: string | null;
   nome_familia: string;
+  logradouro: string | null;
+  numero: string | null;
   bairro: string | null;
   responsavel: string | null;
 }
@@ -32,7 +35,7 @@ function throwIfQueryFailed(...errors: Array<{ message: string } | null>): void 
 }
 
 function matchesFilter(filtro: CadastroMapaFiltro, casa: Casa, nivelRisco: string, chefe?: Individuo): boolean {
-  const bairroConfere = !filtro.bairro || casa.bairro.toLowerCase().includes(filtro.bairro.toLowerCase());
+  const bairroConfere = !filtro.bairro || (casa.bairro ?? '').toLowerCase().includes(filtro.bairro.toLowerCase());
   const riscoConfere = !filtro.nivel_risco || nivelRisco === filtro.nivel_risco;
   const construcaoConfere = !filtro.tipo_construcao || casa.tipo_construcao === filtro.tipo_construcao;
   const generoConfere = !filtro.genero || chefe?.genero === filtro.genero;
@@ -82,7 +85,10 @@ export class CadastroMapaRepository {
         lat: casa.coordenada_lat,
         lng: casa.coordenada_long,
         nivel_risco: nivelRisco,
+        codigo_setor: setor?.codigo_setor ?? null,
         nome_familia: nucleo.nome_nucleo,
+        logradouro: casa.logradouro ?? null,
+        numero: casa.numero ?? null,
         bairro: casa.bairro ?? null,
         responsavel: chefe?.nome_completo ?? null,
       });

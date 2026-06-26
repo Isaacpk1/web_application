@@ -10,15 +10,8 @@ import { router } from './routes';
 import { formatError, formatSuccess } from './views/responseFormatter';
 
 const app = express();
-// Na Vercel o handler e empacotado em `api/`; os templates sao incluidos a
-// partir da raiz do projeto. No servidor compilado local, permanecem em dist.
-const runningOnVercel = Boolean(process.env.VERCEL);
-const publicDir = runningOnVercel
-  ? path.join(process.cwd(), 'public')
-  : path.join(__dirname, '../public');
-const viewsDir = runningOnVercel
-  ? path.join(process.cwd(), 'src', 'views')
-  : path.join(__dirname, 'views');
+const publicDir = path.join(__dirname, '../public');
+const viewsDir  = path.join(__dirname, 'views');
 
 app.set('view engine', 'ejs');
 app.set('views', viewsDir);
@@ -86,3 +79,4 @@ app.use((_req: Request, res: Response) => {
 });
 
 export { app };
+export default app;

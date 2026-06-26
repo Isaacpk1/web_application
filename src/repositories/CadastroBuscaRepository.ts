@@ -15,7 +15,10 @@ export interface CadastroBuscaResultado {
   id: number;
   nome_familia: string;
   nome_responsavel: string | null;
+  codigo_setor: string | null;
   cpf: string | null;
+  logradouro: string | null;
+  numero: string | null;
   bairro: string | null;
   nivel_risco: string;
   prioridade_vulnerabilidade: 'ALTA' | 'MEDIA' | 'BAIXA';
@@ -109,7 +112,10 @@ export class CadastroBuscaRepository {
       id: nucleo.id,
       nome_familia: nucleo.nome_nucleo,
       nome_responsavel: chefe?.nome_completo ?? null,
+      codigo_setor: setor?.codigo_setor ?? null,
       cpf: chefe?.cpf ?? null,
+      logradouro: casa?.logradouro ?? null,
+      numero: casa?.numero ?? null,
       bairro: casa?.bairro ?? null,
       nivel_risco: nivelRisco,
       prioridade_vulnerabilidade: NIVEL_PARA_PRIORIDADE[nivelRisco] ?? 'BAIXA',

@@ -45,6 +45,16 @@ describe('CasaService alinhado a tabela casa', () => {
     });
   });
 
+  it('aceita campos de endereco vazios e normaliza para null', async () => {
+    const repository = makeRepository();
+    const payload = createCasaDTO({ logradouro: '', numero: '', bairro: '' });
+    repository.create.mockResolvedValue(casa({ logradouro: null, numero: null, bairro: null }));
+
+    await new CasaService(repository).create(payload);
+
+    expect(repository.create).toHaveBeenCalledWith({ ...payload, logradouro: null, numero: null, bairro: null });
+  });
+
   it('rejeita setor, CEP e coordenadas invalidos', async () => {
     const service = new CasaService(makeRepository());
 

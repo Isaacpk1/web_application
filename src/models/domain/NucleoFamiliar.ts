@@ -8,5 +8,5 @@ export interface NucleoFamiliar {
   tempo_residencia_domicilio: number | null;
   tempo_residencia_area: number | null;
   tempo_residencia_municipio: number | null;
-  renda_familiar_total: number;
+  renda_familiar_total: number | null;
 }

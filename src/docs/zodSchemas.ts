@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import zodToJsonSchema from 'zod-to-json-schema';
+import { zodToJsonSchema } from 'zod-to-json-schema';
 
 const nullableString = z.string().nullable();
 const id = z.number().int().positive();
@@ -13,6 +13,7 @@ const openApi = (schema: z.ZodTypeAny): Record<string, unknown> => convert(schem
 const cadastrador = z.object({ id, nome: z.string(), documento: z.string().regex(/^\d{3}\.\d{3}-\d$/) }).strip();
 const setor = z.object({
   id,
+  codigo_setor: z.string(),
   nome_regiao: z.string(),
   tipo_risco: z.string(),
   grau_risco: z.enum(['Baixo', 'Médio', 'Alto', 'Muito Alto']).nullable(),
@@ -22,10 +23,10 @@ const casa = z.object({
   id_setor: id,
   coordenada_lat: z.number(),
   coordenada_long: z.number(),
-  logradouro: z.string(),
-  numero: z.string(),
+  logradouro: nullableString,
+  numero: nullableString,
   observacao: nullableString,
-  bairro: z.string(),
+  bairro: nullableString,
   cep: nullableString,
   tipo_construcao: z.enum(['Madeira', 'Alvenaria', 'Misto']),
   uso_imovel: z.enum(['Residencial', 'Comercial', 'Misto']),
@@ -42,7 +43,7 @@ const nucleoFamiliar = z.object({
   tempo_residencia_domicilio: z.number().int().nullable(),
   tempo_residencia_area: z.number().int().nullable(),
   tempo_residencia_municipio: z.number().int().nullable(),
-  renda_familiar_total: z.number().nonnegative(),
+  renda_familiar_total: z.number().nonnegative().nullable(),
 }).strip();
 const individuo = z.object({
   id,
@@ -82,8 +83,8 @@ const pet = z.object({
 }).strip();
 
 const createCadastrador = cadastrador.omit({ id: true });
-const createSetor = setor.omit({ id: true }).partial({ grau_risco: true });
-const createCasa = casa.omit({ id: true }).partial({ observacao: true, cep: true, status_imovel: true, data_interdicao: true });
+const createSetor = setor.omit({ id: true, codigo_setor: true }).partial({ grau_risco: true });
+const createCasa = casa.omit({ id: true }).partial({ logradouro: true, numero: true, bairro: true, observacao: true, cep: true, status_imovel: true, data_interdicao: true });
 const createNucleoFamiliar = nucleoFamiliar.omit({ id: true }).partial({
   id_chefe_familia: true, observacao: true, tempo_residencia_domicilio: true,
   tempo_residencia_area: true, tempo_residencia_municipio: true, renda_familiar_total: true,

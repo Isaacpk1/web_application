@@ -10,7 +10,7 @@ export function parseBody<T>(schema: z.ZodType<T>, body: unknown): T {
   }
 
   const details = result.error.issues
-    .map((issue: z.ZodIssue) => {
+    .map((issue) => {
       const field = issue.path.length > 0 ? issue.path.join('.') : 'body';
       return `${field}: ${issue.message}`;
     })

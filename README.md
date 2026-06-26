@@ -27,7 +27,7 @@ Aplicação web de georreferenciamento para gestão de riscos e acolhimento emer
 
 ## Pré-requisitos
 
-- [Node.js](https://nodejs.org/) v22 ou superior
+- [Node.js](https://nodejs.org/) v18 ou superior
 - Conta no [Supabase](https://supabase.com/) (ou use o modo mock para desenvolvimento sem banco)
 - npm (incluso no Node.js)
 
@@ -85,25 +85,6 @@ npm run lint         # Verifica o código com ESLint
 npm run lint:fix     # Corrige automaticamente os erros de lint
 npm run quality      # lint + cobertura de testes
 ```
-
-## Deploy na Vercel
-
-O projeto ja inclui a configuracao serverless em `vercel.json`. Ao importar o
-repositorio na Vercel, mantenha os valores detectados automaticamente
-(`npm run build` como comando de build) e cadastre estas variaveis de ambiente
-em **Settings > Environment Variables**, tanto para Preview quanto para
-Production:
-
-```env
-SUPABASE_URL=https://<seu-projeto>.supabase.co
-SUPABASE_SERVICE_ROLE_KEY=<sua-service-role-key>
-SUPABASE_ANON_KEY=<sua-anon-key>
-MOCK_AUTH=false
-```
-
-Nao cadastre `PORT`: a Vercel administra essa configuracao. A chave
-`SUPABASE_SERVICE_ROLE_KEY` e sigilosa e nunca deve ser exposta no frontend.
-Depois do deploy, valide `https://<seu-dominio>/health` e o login.
 
 ## Cadastro atômico e migrations
 

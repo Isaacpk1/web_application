@@ -29,6 +29,7 @@ export const createSetorDTO = (overrides: Partial<CreateSetorDTO> = {}): CreateS
 });
 export const setor = (overrides: Partial<Setor> = {}): Setor => ({
   id: setorId,
+  codigo_setor: 'STA',
   nome_regiao: 'VILA PALMARES',
   tipo_risco: 'Deslizamento',
   grau_risco: 'Alto',
@@ -52,7 +53,10 @@ export const createCasaDTO = (overrides: Partial<CreateCasaDTO> = {}): CreateCas
 export const casa = (overrides: Partial<Casa> = {}): Casa => ({
   id: casaId,
   ...createCasaDTO(),
+  logradouro: 'Rua A',
+  numero: '100',
   observacao: null,
+  bairro: 'Centro',
   cep: '01234567',
   status_imovel: 'Sadio',
   data_interdicao: null,

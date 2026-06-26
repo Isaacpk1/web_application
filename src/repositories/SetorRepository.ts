@@ -126,6 +126,7 @@ export class SetorRepository {
       const maiorOrdem = Math.max(0, ...riscos.map((vinculo) => graus.get(vinculo.id_grau_risco) ?? 0));
       return {
         id: setor.id,
+        codigo_setor: setor.codigo_setor,
         nome_regiao: setor.denominacao ?? setor.codigo_setor,
         tipo_risco: tiposRisco.join(', '),
         grau_risco: this.grauRiscoPorOrdem(maiorOrdem),
@@ -136,7 +137,7 @@ export class SetorRepository {
   private grauRiscoPorOrdem(ordem: number): Setor['grau_risco'] {
     if (ordem >= 4) return 'Muito Alto';
     if (ordem === 3) return 'Alto';
-    if (ordem === 2) return 'M\u00e9dio';
+    if (ordem === 2) return 'Médio';
     return 'Baixo';
   }
 

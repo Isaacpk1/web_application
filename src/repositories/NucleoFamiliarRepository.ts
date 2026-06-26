@@ -31,7 +31,7 @@ export class NucleoFamiliarRepository {
         tempo_residencia_domicilio: payload.tempo_residencia_domicilio ?? null,
         tempo_residencia_area: payload.tempo_residencia_area ?? null,
         tempo_residencia_municipio: payload.tempo_residencia_municipio ?? null,
-        renda_familiar_total: payload.renda_familiar_total ?? 0,
+        renda_familiar_total: payload.renda_familiar_total ?? null,
       })
       .select('*')
       .single();
@@ -72,7 +72,7 @@ export class NucleoFamiliarRepository {
       tempo_residencia_domicilio: row.tempo_residencia_domicilio === null ? null : Number(row.tempo_residencia_domicilio),
       tempo_residencia_area: row.tempo_residencia_area === null ? null : Number(row.tempo_residencia_area),
       tempo_residencia_municipio: row.tempo_residencia_municipio === null ? null : Number(row.tempo_residencia_municipio),
-      renda_familiar_total: Number(row.renda_familiar_total),
+      renda_familiar_total: row.renda_familiar_total === null ? null : Number(row.renda_familiar_total),
     };
   }
 }
