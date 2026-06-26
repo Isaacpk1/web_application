@@ -1203,6 +1203,38 @@ select.m-field__control {
 .m-map.is-empty .m-map__pill { display: none; }
 .m-map.is-empty .m-map__empty { display: block; }
 
+.m-step[data-step="1"] .m-gps-block,
+.m-step[data-step="1"] > .m-map,
+.m-step[data-step="1"] > .m-badge-ok,
+.m-step[data-step="1"] > .m-btn-gps {
+  max-width: 760px;
+  margin-left: auto !important;
+  margin-right: auto !important;
+}
+
+.m-step[data-step="1"] .m-gps-block .m-map,
+.m-step[data-step="1"] > .m-map {
+  width: min(100%, 760px) !important;
+  height: 240px;
+  margin-top: 0 !important;
+  margin-bottom: 16px !important;
+  border-radius: 14px;
+}
+
+.m-step[data-step="1"] .m-gps-block .m-badge-ok.show,
+.m-step[data-step="1"] > .m-badge-ok.show {
+  width: fit-content !important;
+  min-width: min(100%, 360px);
+  display: inline-flex !important;
+  justify-content: center;
+  margin-bottom: 12px !important;
+}
+
+.m-step[data-step="1"] .m-gps-block .m-btn-gps,
+.m-step[data-step="1"] > .m-btn-gps {
+  width: min(100%, 360px) !important;
+}
+
 .m-badge-ok {
   display: inline-flex; align-items: center; gap: 8px; margin-top: 12px;
   background: #e5fced; color: #0d7333; font-size: 11px; font-weight: 500;

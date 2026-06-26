@@ -112,6 +112,33 @@
       color: #9CA3AF;
       margin: 0 0 14px;
     }
+    .m-step[data-step="1"] .m-gps-block,
+    .m-step[data-step="1"] > .m-map,
+    .m-step[data-step="1"] > .m-badge-ok,
+    .m-step[data-step="1"] > .m-btn-gps {
+      max-width: 760px;
+      margin-left: auto !important;
+      margin-right: auto !important;
+    }
+    .m-step[data-step="1"] .m-gps-block .m-map,
+    .m-step[data-step="1"] > .m-map {
+      width: min(100%, 760px) !important;
+      height: 240px;
+      margin-top: 0 !important;
+      margin-bottom: 16px !important;
+      border-radius: 14px;
+    }
+    .m-step[data-step="1"] .m-gps-block .m-badge-ok.show,
+    .m-step[data-step="1"] > .m-badge-ok.show {
+      width: fit-content !important;
+      min-width: min(100%, 360px);
+      display: inline-flex !important;
+      margin-bottom: 12px !important;
+    }
+    .m-step[data-step="1"] .m-gps-block .m-btn-gps,
+    .m-step[data-step="1"] > .m-btn-gps {
+      width: min(100%, 360px) !important;
+    }
 
     /* ── Revisão cards ── */
     .m-review-card { background: #F9FAFB; border-radius: 10px; padding: 14px 16px; margin-bottom: 14px; }
